@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="54dp"
+    android:padding="8dp"
+    android:orientation="horizontal"
+    android:layout_margin="8dp"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="3">
+
+        <TextView
+            android:id="@+id/tv_customer_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/customer_name"
+            android:padding="4dp"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:ellipsize="none"
+            android:layout_marginStart="5dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/route"
+                android:padding="4dp"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:ellipsize="none"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"/>
+
+            <TextView
+                android:id="@+id/tv_customer_route"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/customer_route"
+                android:padding="4dp"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:ellipsize="none"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_customer_pending_amount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/_0000"
+        android:padding="4dp"
+        android:layout_weight="1"
+        android:gravity="end"
+        android:textSize="14sp"
+        android:textColor="@color/black"/>
+</LinearLayout>

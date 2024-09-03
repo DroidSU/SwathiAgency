@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<!--    <item-->
+<!--        android:id="@+id/menu_item_take_order"-->
+<!--        android:enabled="true"-->
+<!--        android:icon="@drawable/ic_order"-->
+<!--        android:title="@string/orders"-->
+<!--        app:itemIconSize="20dp"-->
+<!--        />-->
+
+<!--    <item-->
+<!--        android:id="@+id/menu_item_view_reports"-->
+<!--        android:enabled="true"-->
+<!--        android:icon="@drawable/ic_order"-->
+<!--        android:title="@string/view_reports"-->
+<!--        app:itemIconSize="20dp"-->
+<!--        android:textSize="12sp"/>-->
+
+    <item
+        android:id="@+id/backup"
+        android:enabled="true"
+        android:icon="@drawable/ic_order"
+        android:title="@string/backup_orders"
+        app:itemIconSize="20dp"
+        android:textSize="12sp"/>
+</menu>

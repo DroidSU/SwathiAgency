@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="40dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_margin="8dp"
+    android:padding="6dp"
+    android:background="@drawable/rectangular_button_background">
+
+    <!-- Decrement Button -->
+    <Button
+        android:id="@+id/btn_decrement"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="5dp"
+        android:background="@drawable/ic_minus"/>
+
+    <!-- TextView to Display the Value -->
+    <TextView
+        android:id="@+id/tv_counter_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:minWidth="32dp"
+        android:layout_toEndOf="@id/btn_decrement"/>
+
+    <!-- Increment Button -->
+    <Button
+        android:id="@+id/btn_increment"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="5dp"
+        android:background="@drawable/ic_add_black"
+        android:layout_toEndOf="@id/tv_counter_value"/>
+
+</RelativeLayout>

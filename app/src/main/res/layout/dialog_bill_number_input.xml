@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_rounded_background"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="4dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/select_salesman"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"/>
+
+    <AutoCompleteTextView
+        android:id="@+id/salesman_autoCompleteTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/select_salesman"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/please_enter_starting_bill_number"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:gravity="start"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:orientation="horizontal"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:weightSum="1">
+
+        <EditText
+            android:id="@+id/et_bill_id"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:hint="A"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:padding="10dp"
+            android:background="@drawable/rounded_corner_black_border"
+            android:inputType="text"
+            android:layout_weight="0.2"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:text="-"
+            android:gravity="center"
+            android:textSize="26sp"
+            android:textColor="@color/black"
+            tools:ignore="HardcodedText" />
+        <EditText
+            android:id="@+id/et_bill_number"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:hint="@string/_0000"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:padding="10dp"
+            android:background="@drawable/rounded_corner_black_border"
+            android:inputType="number"
+            android:layout_weight="0.7"/>
+
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_submit_bill_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:backgroundTint="@color/light_blue_600"
+        android:layout_marginTop="15dp"/>
+
+</LinearLayout>
