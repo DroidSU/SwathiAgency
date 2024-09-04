@@ -12,8 +12,9 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import com.google.firebase.storage.FirebaseStorage
-import com.sujoy.swathiagency.data.CustomerModel
-import com.sujoy.swathiagency.data.ITCItemsModel
+import com.sujoy.swathiagency.data.datamodels.CompanyType
+import com.sujoy.swathiagency.data.datamodels.CustomerModel
+import com.sujoy.swathiagency.data.datamodels.ITCItemsModel
 import kotlinx.coroutines.tasks.await
 import java.io.File
 import java.text.SimpleDateFormat
@@ -56,7 +57,7 @@ class UtilityMethods {
             alertDialog.show()
         }
 
-        fun setBillNumber(context: Context, billNumber: Long, billId : String?) {
+        fun setBillNumber(context: Context, billNumber: Long, billId: String?) {
             val sharedPref =
                 context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
             val editor = sharedPref.edit()
@@ -70,8 +71,9 @@ class UtilityMethods {
                 .getLong(Constants.SHARED_PREF_BILL_NUMBER, 0L)
         }
 
-        fun getBillId(context : Context) : String? {
-            return context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE).getString(Constants.SHARED_PREF_BILL_ID, "")
+        fun getBillId(context: Context): String? {
+            return context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
+                .getString(Constants.SHARED_PREF_BILL_ID, "")
         }
 
         fun setSalesmanName(context: Context, salesmanName: String) {
@@ -99,7 +101,7 @@ class UtilityMethods {
             val pcsTotal = item.numberOfPcsOrdered.toFloat() * item.taxablePcsRate.toFloat()
             val totalTaxableValue = boxTotal + pcsTotal
 
-            val taxApplied = totalTaxableValue * (item.taxPercentage.toFloat()/100)
+            val taxApplied = totalTaxableValue * (item.taxPercentage.toFloat() / 100)
             total = totalTaxableValue + taxApplied
 
             item.taxable = totalTaxableValue
@@ -120,7 +122,7 @@ class UtilityMethods {
             }
         }
 
-        fun saveFilePath(context: Context, filePath : String) {
+        fun saveFilePath(context: Context, filePath: String) {
             val sharedPRef =
                 context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
             val editor = sharedPRef.edit()
@@ -128,9 +130,10 @@ class UtilityMethods {
             editor.apply()
         }
 
-        fun getLastBackupFile(context: Context) : File? {
-            val filePath = context.getSharedPreferences(Constants.SHARED_PREF_NAME, MODE_PRIVATE).getString(Constants.SHARED_PREF_LAST_FILE_CREATED, "")
-            return if(filePath != null)
+        fun getLastBackupFile(context: Context): File? {
+            val filePath = context.getSharedPreferences(Constants.SHARED_PREF_NAME, MODE_PRIVATE)
+                .getString(Constants.SHARED_PREF_LAST_FILE_CREATED, "")
+            return if (filePath != null)
                 File(filePath)
             else
                 null
@@ -141,6 +144,7 @@ class UtilityMethods {
         context: Context,
         data: List<ITCItemsModel>,
         customerModel: CustomerModel,
+        companyType: CompanyType
     ): File? {
         try {
             val timeStamp = SimpleDateFormat("ddMMyyyy", Locale.getDefault()).format(Date())
@@ -150,7 +154,21 @@ class UtilityMethods {
             val billId = getBillId(context)
             val salesmanName = UtilityMethods.getSalesmanName(context)
 
-            val fileName = "SwathiAgency_$timeStamp.csv"
+            var fileName = ""
+
+            fileName = when (companyType) {
+                CompanyType.ITC -> {
+                    "ITC_$timeStamp.csv"
+                }
+
+                CompanyType.AVT -> {
+                    "AVT_$timeStamp.csv"
+                }
+
+                else -> {
+                    "OTHERS_$timeStamp.csv"
+                }
+            }
 
             val file: File = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 // App-specific external storage for Android 10 and above
@@ -163,7 +181,7 @@ class UtilityMethods {
             csvWriter().open(file, file.exists()) {
 
                 // Write the header
-                if(!file.exists()){
+                if (!file.exists()) {
                     writeRow(
                         listOf(
                             "Invoice Number",

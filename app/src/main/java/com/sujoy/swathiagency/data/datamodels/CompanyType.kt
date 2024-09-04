@@ -1,4 +1,4 @@
-package com.sujoy.swathiagency.data
+package com.sujoy.swathiagency.data.datamodels
 
 enum class CompanyType {
     ITC,

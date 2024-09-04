@@ -4,6 +4,7 @@ plugins {
     id("kotlin-parcelize")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("io.realm.kotlin")
 }
 
 android {
@@ -72,4 +73,5 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.google.firebase.crashlytics)
     implementation(libs.google.firebase.analytics)
+    implementation(libs.realm)
 }

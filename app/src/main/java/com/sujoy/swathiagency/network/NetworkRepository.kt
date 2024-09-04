@@ -2,8 +2,8 @@ package com.sujoy.swathiagency.network
 
 import android.content.Context
 import android.util.Log
-import com.sujoy.swathiagency.data.CustomerModel
-import com.sujoy.swathiagency.data.ITCItemsModel
+import com.sujoy.swathiagency.data.datamodels.CustomerModel
+import com.sujoy.swathiagency.data.datamodels.ITCItemsModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

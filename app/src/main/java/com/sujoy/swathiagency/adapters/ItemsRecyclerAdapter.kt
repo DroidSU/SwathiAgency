@@ -13,7 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.sujoy.swathiagency.R
-import com.sujoy.swathiagency.data.ITCItemsModel
+import com.sujoy.swathiagency.data.datamodels.ITCItemsModel
 import com.sujoy.swathiagency.interfaces.OnItemEvent
 import com.sujoy.swathiagency.utilities.UtilityMethods
 import com.sujoy.swathiagency.viewmodels.ITCViewModel

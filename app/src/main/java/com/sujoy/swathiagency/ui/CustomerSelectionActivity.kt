@@ -21,7 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujoy.swathiagency.R
 import com.sujoy.swathiagency.adapters.CustomersRecyclerAdapter
-import com.sujoy.swathiagency.data.CustomerModel
+import com.sujoy.swathiagency.data.datamodels.CustomerModel
 import com.sujoy.swathiagency.databinding.ActivityCustomerSelectionBinding
 import com.sujoy.swathiagency.interfaces.OnRecyclerItemClickedListener
 import com.sujoy.swathiagency.interfaces.OnSubmitButtonTapped

@@ -15,9 +15,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujoy.swathiagency.adapters.ItemsRecyclerAdapter
-import com.sujoy.swathiagency.data.CompanyType
-import com.sujoy.swathiagency.data.CustomerModel
-import com.sujoy.swathiagency.data.ITCItemsModel
+import com.sujoy.swathiagency.data.datamodels.CompanyType
+import com.sujoy.swathiagency.data.datamodels.CustomerModel
+import com.sujoy.swathiagency.data.datamodels.ITCItemsModel
 import com.sujoy.swathiagency.databinding.FragmentItcBinding
 import com.sujoy.swathiagency.interfaces.OnItemEvent
 import com.sujoy.swathiagency.network.NetworkRepository
@@ -30,14 +30,14 @@ import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class ITCFragment : Fragment(), OnItemEvent {
+class CompanyFragment : Fragment(), OnItemEvent {
 
     companion object {
         private const val CUSTOMER_MODEL_KEY = "CUSTOMER_MODEL"
         private const val COMPANY_TYPE_KEY = "COMPANY_TYPE"
 
-        fun newInstance(companyType : CompanyType, customerModel: CustomerModel): ITCFragment {
-            val fragment = ITCFragment()
+        fun newInstance(companyType: CompanyType, customerModel: CustomerModel): CompanyFragment {
+            val fragment = CompanyFragment()
             val args = Bundle()
             args.putSerializable(COMPANY_TYPE_KEY, companyType)
             args.putParcelable(CUSTOMER_MODEL_KEY, customerModel)
@@ -62,7 +62,7 @@ class ITCFragment : Fragment(), OnItemEvent {
     private lateinit var itemsRecyclerAdapter: ItemsRecyclerAdapter
     private lateinit var lottieOverlayFragment: LottieOverlayFragment
 
-    private lateinit var companyType : CompanyType
+    private lateinit var companyType: CompanyType
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -96,7 +96,7 @@ class ITCFragment : Fragment(), OnItemEvent {
                         ItemsRecyclerAdapter(
                             value,
                             viewModel,
-                            this@ITCFragment,
+                            this@CompanyFragment,
                             requireContext()
                         )
                     binding.recyclerCategoryItems.adapter = itemsRecyclerAdapter
@@ -131,7 +131,10 @@ class ITCFragment : Fragment(), OnItemEvent {
 //                }, {
 //                })
                 val intent = Intent(requireActivity(), OrderedItemsActivity::class.java)
-                intent.putParcelableArrayListExtra("ordered_item_list", ArrayList(viewModel.orderedItemsList.value))
+                intent.putParcelableArrayListExtra(
+                    "ordered_item_list",
+                    ArrayList(viewModel.orderedItemsList.value)
+                )
                 intent.putExtra("customer_model", selectedCustomer)
                 startActivity(intent)
             }
@@ -176,7 +179,7 @@ class ITCFragment : Fragment(), OnItemEvent {
                             categories.sortedBy { it.substringBefore(" ").toInt() }.toMutableList()
                     }
                     catch (ex : Exception){
-                        Log.e("ERROR occurred", "onViewCreated: $ex")
+                        Log.e("ERROR OCCURRED", "$ex")
                     }
 
                     categoriesAdapter?.let {
@@ -224,15 +227,13 @@ class ITCFragment : Fragment(), OnItemEvent {
 
     override fun onStart() {
         super.onStart()
-        if(UtilityMethods.isNetworkAvailable(requireContext())){
-            if(companyType == CompanyType.ITC){
+        if (UtilityMethods.isNetworkAvailable(requireContext())) {
+            if (companyType == CompanyType.ITC) {
                 viewModel.fetchItemData("https://drive.google.com/uc?export=download&id=${Constants.ITC_ITEM_FILE_DRIVE_ID}")
-            }
-            else{
+            } else {
                 viewModel.fetchItemData("https://drive.google.com/uc?export=download&id=${Constants.AVT_ITEM_FILE_DRIVE_ID}")
             }
-        }
-        else{
+        } else {
             Toast.makeText(
                 requireContext(),
                 "No internet connection available!",

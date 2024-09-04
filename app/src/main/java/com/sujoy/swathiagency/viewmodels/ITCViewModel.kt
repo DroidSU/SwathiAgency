@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sujoy.swathiagency.data.CustomerModel
-import com.sujoy.swathiagency.data.ITCItemsModel
+import com.sujoy.swathiagency.data.datamodels.CustomerModel
+import com.sujoy.swathiagency.data.datamodels.ITCItemsModel
 import com.sujoy.swathiagency.network.NetworkRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

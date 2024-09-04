@@ -1,4 +1,4 @@
-package com.sujoy.swathiagency.data
+package com.sujoy.swathiagency.data.datamodels
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

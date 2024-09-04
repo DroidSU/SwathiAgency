@@ -54,6 +54,7 @@ coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-andro
 lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx", version.ref = "firebase-crashlytics" }
+realm = { group = "io.realm.kotlin", name = "library", version = "1.10.0" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sujoy.swathiagency.R
-import com.sujoy.swathiagency.data.ITCItemsModel
+import com.sujoy.swathiagency.data.datamodels.ITCItemsModel
 
 class OrderedItemsRecyclerAdapter(private var orderedItemList: MutableList<ITCItemsModel>) :
     RecyclerView.Adapter<OrderedItemsRecyclerAdapter.OrderedItemsViewHolder>() {

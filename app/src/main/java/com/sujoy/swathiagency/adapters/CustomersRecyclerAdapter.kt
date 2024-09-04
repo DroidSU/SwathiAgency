@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.sujoy.swathiagency.R
-import com.sujoy.swathiagency.data.CustomerModel
+import com.sujoy.swathiagency.data.datamodels.CustomerModel
 import com.sujoy.swathiagency.interfaces.OnRecyclerItemClickedListener
 
 class CustomersRecyclerAdapter(

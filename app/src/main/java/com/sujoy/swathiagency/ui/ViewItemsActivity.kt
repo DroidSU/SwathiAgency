@@ -12,7 +12,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.sujoy.swathiagency.R
 import com.sujoy.swathiagency.adapters.CompanyViewPagerAdapter
-import com.sujoy.swathiagency.data.CustomerModel
+import com.sujoy.swathiagency.data.datamodels.CustomerModel
 import com.sujoy.swathiagency.databinding.ActivityViewItemsBinding
 
 class ViewItemsActivity : AppCompatActivity() {
