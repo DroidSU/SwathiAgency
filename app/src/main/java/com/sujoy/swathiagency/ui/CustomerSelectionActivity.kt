@@ -271,11 +271,6 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
 
                         withContext(Dispatchers.Main) {
                             lottieOverlayFragment.dismiss()
-                            UtilityMethods.setBillNumber(
-                                this@CustomerSelectionActivity,
-                                billNumber = (UtilityMethods.getBillNumber(this@CustomerSelectionActivity) + 1),
-                                UtilityMethods.getBillId(this@CustomerSelectionActivity)
-                            )
                             Toast.makeText(
                                 this@CustomerSelectionActivity,
                                 "Order backed up successfully",

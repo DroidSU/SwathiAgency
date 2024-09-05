@@ -62,11 +62,23 @@ class ViewItemsActivity : AppCompatActivity() {
         binding.tlCompanyTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 tab?.let {
-                    if (tab.position == 0) {
-                        binding.viewpagerCompany.setCurrentItem(0, true)
-                    } else {
-                        Toast.makeText(this@ViewItemsActivity, "Coming Soon", Toast.LENGTH_SHORT)
-                            .show()
+                    when (tab.position) {
+                        0 -> {
+                            binding.viewpagerCompany.setCurrentItem(0, true)
+                        }
+
+                        1 -> {
+                            binding.viewpagerCompany.setCurrentItem(1, true)
+                        }
+
+                        else -> {
+                            Toast.makeText(
+                                this@ViewItemsActivity,
+                                "Coming Soon",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                        }
                     }
                 }
             }

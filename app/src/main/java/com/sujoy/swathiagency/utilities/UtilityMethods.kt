@@ -164,10 +164,12 @@ class UtilityMethods {
                 File(context.filesDir, fileName)
             }
 
-            csvWriter().open(file, file.exists()) {
+            val fileExists = file.exists()
+
+            csvWriter().open(file, true) {
 
                 // Write the header
-                if (!file.exists()) {
+                if (!fileExists) {
                     writeRow(
                         listOf(
                             "Invoice Number",

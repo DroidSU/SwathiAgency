@@ -16,8 +16,8 @@ class BillNumberDialog(private var onSubmitButtonTapped: OnSubmitButtonTapped) :
     private lateinit var binding: DialogBillNumberInputBinding
     private var billNumber: Long = 0
     private val salesmanList = listOf("KK", "MADHAN", "NANDHA")
-    private var selectedSalesMan : String = ""
-    private var billId : String = ""
+    private var selectedSalesMan: String = ""
+    private var billId: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,7 +37,7 @@ class BillNumberDialog(private var onSubmitButtonTapped: OnSubmitButtonTapped) :
         }
 
         binding.salesmanAutoCompleteTextView.setOnFocusChangeListener { view, hasFocus ->
-            if(hasFocus){
+            if (hasFocus) {
                 binding.salesmanAutoCompleteTextView.showDropDown()
             }
         }
@@ -51,19 +51,19 @@ class BillNumberDialog(private var onSubmitButtonTapped: OnSubmitButtonTapped) :
             if (billId.isNotEmpty() && binding.etBillNumber.text.isNotEmpty() && selectedSalesMan.isNotEmpty()) {
                 billNumber = binding.etBillNumber.text.toString().toLong()
                 dismiss()
-                onSubmitButtonTapped.onSubmitButtonTap(billId ,billNumber, selectedSalesMan)
+                onSubmitButtonTapped.onSubmitButtonTap(billId, billNumber, selectedSalesMan)
             } else {
-                if(selectedSalesMan.isEmpty()){
+                if (selectedSalesMan.isEmpty()) {
                     binding.salesmanAutoCompleteTextView.error = "Please select salesman"
-                }
-                else{
+                } else {
                     binding.etBillId.error = "Please enter bill number to continue"
                     binding.etBillNumber.error = "Please enter bill number to continue"
                 }
             }
         }
 
-        val adapter = ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line, salesmanList)
+        val adapter =
+            ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line, salesmanList)
         binding.salesmanAutoCompleteTextView.setAdapter(adapter)
     }
 

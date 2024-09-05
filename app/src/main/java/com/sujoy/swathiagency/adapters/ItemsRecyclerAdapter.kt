@@ -2,6 +2,8 @@ package com.sujoy.swathiagency.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +12,6 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.sujoy.swathiagency.R
 import com.sujoy.swathiagency.data.datamodels.ITCItemsModel
@@ -81,29 +82,6 @@ class ItemsRecyclerAdapter(
             setDataOnViews(holder, currentItem)
         }
 
-        holder.boxCountEditText.doAfterTextChanged { text ->
-            currentItem = itemList[position]
-            if (!text.isNullOrEmpty()) {
-                currentItem.numberOfBoxesOrdered = text.toString().toInt()
-            } else {
-                currentItem.numberOfBoxesOrdered = 0
-            }
-
-            updateTotalValue(holder, currentItem)
-            onItemEvent.onItemValueChanged(currentItem)
-        }
-
-        holder.pcsCountEditText.doAfterTextChanged { text ->
-            if (!text.isNullOrEmpty()) {
-                currentItem.numberOfPcsOrdered = text.toString().toInt()
-            } else {
-                currentItem.numberOfPcsOrdered = 0
-            }
-
-            updateTotalValue(holder, currentItem)
-            onItemEvent.onItemValueChanged(currentItem)
-        }
-
         holder.boxIncrementButton.setOnClickListener {
             if (holder.boxCountContainer.isEnabled) {
                 currentItem.numberOfBoxesOrdered += 1
@@ -136,11 +114,49 @@ class ItemsRecyclerAdapter(
     }
 
     private fun setDataOnViews(holder: ItemsViewHolder, currentItem: ITCItemsModel) {
+        // Store reference to listeners
+        val boxTextWatcher = object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+
+                if (!s.isNullOrEmpty()) {
+                    currentItem.numberOfBoxesOrdered = s.toString().toInt()
+                } else {
+                    currentItem.numberOfBoxesOrdered = 0
+                }
+
+                updateTotalValue(holder, currentItem)
+                onItemEvent.onItemValueChanged(currentItem)
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        }
+
+        val pcsTextWatcher = object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (!s.isNullOrEmpty()) {
+                    currentItem.numberOfPcsOrdered = s.toString().toInt()
+                } else {
+                    currentItem.numberOfPcsOrdered = 0
+                }
+
+                updateTotalValue(holder, currentItem)
+                onItemEvent.onItemValueChanged(currentItem)
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        }
+
         if (currentItem.selected) {
             holder.boxCountContainer.visibility = View.VISIBLE
             holder.pcsCountContainer.visibility = View.VISIBLE
             holder.totalAmountContainer.visibility = View.VISIBLE
             holder.textViewTotalValue.text = "${currentItem.totalAmount}"
+
+            // Detach the listener before setting the text
+            holder.boxCountEditText.removeTextChangedListener(boxTextWatcher)
+            holder.pcsCountEditText.removeTextChangedListener(pcsTextWatcher)
 
             if(currentItem.numberOfBoxesOrdered > 0)
                 holder.boxCountEditText.setText(currentItem.numberOfBoxesOrdered.toString())
@@ -155,6 +171,9 @@ class ItemsRecyclerAdapter(
                 holder.pcsCountEditText.setText("")
                 holder.pcsCountEditText.hint = "0"
             }
+
+            holder.boxCountEditText.addTextChangedListener(boxTextWatcher)
+            holder.pcsCountEditText.addTextChangedListener(pcsTextWatcher)
 
         } else {
             holder.boxCountContainer.visibility = View.GONE
@@ -185,6 +204,6 @@ class ItemsRecyclerAdapter(
     ) {
         itemList.clear()
         itemList.addAll(newItems)
-//        notifyDataSetChanged()
+        notifyDataSetChanged()
     }
 }
