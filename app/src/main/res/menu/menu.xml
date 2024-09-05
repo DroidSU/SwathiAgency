@@ -18,10 +18,18 @@
 <!--        android:textSize="12sp"/>-->
 
     <item
-        android:id="@+id/backup"
+        android:id="@+id/backup_itc"
         android:enabled="true"
         android:icon="@drawable/ic_order"
-        android:title="@string/backup_orders"
+        android:title="@string/backup_orders_itc"
+        app:itemIconSize="20dp"
+        android:textSize="12sp"/>
+
+    <item
+        android:id="@+id/backup_avt"
+        android:enabled="true"
+        android:icon="@drawable/ic_order"
+        android:title="@string/backup_orders_avt"
         app:itemIconSize="20dp"
         android:textSize="12sp"/>
 </menu>

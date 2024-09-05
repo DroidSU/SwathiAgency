@@ -38,6 +38,7 @@
     <string name="box_ordered">Box ordered</string>
     <string name="pcs_ordered">Pcs Ordered</string>
     <string name="item_total">Item Total</string>
-    <string name="backup_orders">Backup orders</string>
+    <string name="backup_orders_itc">Backup ITC orders</string>
     <string name="route">Route :</string>
+    <string name="backup_orders_avt">Backup AVT orders\n</string>
 </resources>

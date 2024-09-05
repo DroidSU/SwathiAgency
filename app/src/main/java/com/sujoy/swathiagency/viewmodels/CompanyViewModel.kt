@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ITCViewModel(private val repository: NetworkRepository) : ViewModel() {
+class CompanyViewModel(private val repository: NetworkRepository) : ViewModel() {
     private val _itemData = MutableStateFlow<ArrayList<ITCItemsModel>>(arrayListOf())
     val itemData: StateFlow<ArrayList<ITCItemsModel>> = _itemData
     private val _categories = MutableStateFlow<MutableList<String>>(arrayListOf())

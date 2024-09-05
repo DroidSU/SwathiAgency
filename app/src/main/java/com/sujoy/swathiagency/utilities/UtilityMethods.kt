@@ -12,7 +12,6 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import com.google.firebase.storage.FirebaseStorage
-import com.sujoy.swathiagency.data.datamodels.CompanyType
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
 import com.sujoy.swathiagency.data.datamodels.ITCItemsModel
 import kotlinx.coroutines.tasks.await
@@ -122,29 +121,16 @@ class UtilityMethods {
             }
         }
 
-        fun saveFilePath(context: Context, filePath: String) {
-            val sharedPRef =
-                context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
-            val editor = sharedPRef.edit()
-            editor.putString(Constants.SHARED_PREF_LAST_FILE_CREATED, filePath)
-            editor.apply()
-        }
-
-        fun getLastBackupFile(context: Context): File? {
-            val filePath = context.getSharedPreferences(Constants.SHARED_PREF_NAME, MODE_PRIVATE)
-                .getString(Constants.SHARED_PREF_LAST_FILE_CREATED, "")
-            return if (filePath != null)
-                File(filePath)
-            else
-                null
+        fun getCurrentDateString(pattern: String): String {
+            return SimpleDateFormat(pattern, Locale.getDefault()).format(Date())
         }
     }
 
-    fun createCsvFile(
+    fun createOrUpdateCsvFile(
         context: Context,
         data: List<ITCItemsModel>,
         customerModel: CustomerModel,
-        companyType: CompanyType
+        companyType: String
     ): File? {
         try {
             val timeStamp = SimpleDateFormat("ddMMyyyy", Locale.getDefault()).format(Date())
@@ -152,16 +138,16 @@ class UtilityMethods {
 
             val billNumber = getBillNumber(context)
             val billId = getBillId(context)
-            val salesmanName = UtilityMethods.getSalesmanName(context)
+            val salesmanName = getSalesmanName(context)
 
             var fileName = ""
 
             fileName = when (companyType) {
-                CompanyType.ITC -> {
+                Constants.COMPANY_TYPE_ITC -> {
                     "ITC_$timeStamp.csv"
                 }
 
-                CompanyType.AVT -> {
+                Constants.COMPANY_TYPE_AVT -> {
                     "AVT_$timeStamp.csv"
                 }
 
@@ -246,11 +232,13 @@ class UtilityMethods {
     // Upload the CSV file to Firebase Storage
     suspend fun uploadCsvFile(context: Context, csvFile: File): Uri? {
         val storageReference = FirebaseStorage.getInstance().reference
+        val date = getCurrentDateString("dd-MM-yyyy")
+        val salesmanName = getSalesmanName(context)
 
         return try {
             // Create a reference to the file you want to upload
             val fileUri = Uri.fromFile(csvFile)
-            val storageRef = storageReference.child("BACKUP/${csvFile.name}")
+            val storageRef = storageReference.child("BACKUP/${salesmanName}/$date/${csvFile.name}")
 
             // Upload the file
             val uploadTask = storageRef.putFile(fileUri).await()

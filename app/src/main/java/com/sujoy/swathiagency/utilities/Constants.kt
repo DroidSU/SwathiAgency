@@ -12,5 +12,14 @@ class Constants {
         const val SHARED_PREF_BILL_ID = "bill_id"
         const val SHARED_PREF_SALESMAN_NAME = "salesman_name"
         const val SHARED_PREF_LAST_FILE_CREATED = "file_path"
+
+        const val TABLE_FILE_OBJECTS = "FileObjects"
+        const val IS_BACKED_UP = "isBackedUp"
+        const val CREATED_ON_DATE = "createdOn"
+        const val COMPANY_NAME = "companyName"
+
+        const val COMPANY_TYPE_ITC = "ITC"
+        const val COMPANY_TYPE_AVT = "AVT"
+        const val COMPANY_TYPE_OTHERS = "OTHERS"
     }
 }

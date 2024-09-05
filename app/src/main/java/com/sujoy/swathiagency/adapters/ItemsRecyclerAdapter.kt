@@ -16,13 +16,13 @@ import com.sujoy.swathiagency.R
 import com.sujoy.swathiagency.data.datamodels.ITCItemsModel
 import com.sujoy.swathiagency.interfaces.OnItemEvent
 import com.sujoy.swathiagency.utilities.UtilityMethods
-import com.sujoy.swathiagency.viewmodels.ITCViewModel
+import com.sujoy.swathiagency.viewmodels.CompanyViewModel
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 class ItemsRecyclerAdapter(
     private var itemList: MutableList<ITCItemsModel>,
-    private var itcViewModel: ITCViewModel,
+    private var itcViewModel: CompanyViewModel,
     private val onItemEvent: OnItemEvent,
     private val context: Context
 ) :

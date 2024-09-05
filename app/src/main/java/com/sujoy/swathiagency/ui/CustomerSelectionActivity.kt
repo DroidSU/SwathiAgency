@@ -22,6 +22,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujoy.swathiagency.R
 import com.sujoy.swathiagency.adapters.CustomersRecyclerAdapter
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
+import com.sujoy.swathiagency.data.dbModels.FileObjectModels
+import com.sujoy.swathiagency.database.AppDatabase
 import com.sujoy.swathiagency.databinding.ActivityCustomerSelectionBinding
 import com.sujoy.swathiagency.interfaces.OnRecyclerItemClickedListener
 import com.sujoy.swathiagency.interfaces.OnSubmitButtonTapped
@@ -30,9 +32,11 @@ import com.sujoy.swathiagency.utilities.Constants
 import com.sujoy.swathiagency.utilities.UtilityMethods
 import com.sujoy.swathiagency.viewmodels.CsvViewModelFactory
 import com.sujoy.swathiagency.viewmodels.CustomerSelectionViewModel
+import com.sujoy.swathiagency.viewmodels.FileObjectModelRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 
 class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedListener,
     OnSubmitButtonTapped {
@@ -47,12 +51,17 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
     private var filterBy: Int = 0
     private var salesmanName: String = ""
     private var billId: String = ""
+    private var fileObjectModelsList: List<FileObjectModels> = listOf()
+    private var companyType = Constants.COMPANY_TYPE_ITC
 
     private lateinit var lottieOverlayFragment: LottieOverlayFragment
 
 
     private val viewModel: CustomerSelectionViewModel by viewModels {
-        CsvViewModelFactory(NetworkRepository(this))
+        CsvViewModelFactory(
+            NetworkRepository(this),
+            FileObjectModelRepository(AppDatabase.getDatabase(this).orderDao())
+        )
     }
 
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
@@ -114,6 +123,7 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
             viewModel.csvData.collect { data ->
                 if (data.isNotEmpty()) {
                     customerList = data
+                    customerList.sortBy { item -> item.customerName }
                     customerRecyclerAdapter.updateData(customerList)
                     binding.llLoadingView.visibility = View.GONE
                     binding.rvCustomers.visibility = View.VISIBLE
@@ -141,6 +151,16 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
         binding.ivFilter.setOnClickListener {
             showPopupMenu(it)
         }
+
+        lifecycleScope.launch {
+            viewModel.fileList.collect { data ->
+                if (data.isNotEmpty()) {
+                    fileObjectModelsList = data
+
+                    uploadBackupFiles()
+                }
+            }
+        }
     }
 
     private fun showPopupMenu(view: View) {
@@ -152,12 +172,16 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
                 R.id.menu_opt_1 -> {
                     filterBy = 0
                     binding.searchViewChooseCustomer.queryHint = "Search by customer name"
+                    customerList.sortBy { item -> item.customerName }
+                    customerRecyclerAdapter.updateData(customerList)
                     true
                 }
 
                 R.id.menu_opt_2 -> {
                     filterBy = 1
                     binding.searchViewChooseCustomer.queryHint = "Search by route"
+                    customerList.sortBy { item -> item.customerRoute }
+                    customerRecyclerAdapter.updateData(customerList)
                     true
                 }
 
@@ -180,10 +204,9 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
     }
 
     private fun fetchCustomerList() {
-        if(UtilityMethods.isNetworkAvailable(this)){
+        if (UtilityMethods.isNetworkAvailable(this)) {
             viewModel.loadCsvData("https://drive.google.com/uc?export=download&id=${Constants.CUSTOMER_FILE_DRIVE_ID}")
-        }
-        else{
+        } else {
             Toast.makeText(
                 this,
                 "No internet connection available!",
@@ -219,46 +242,47 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.backup -> {
-                uploadCurrentBackup()
+            R.id.backup_itc -> {
+                companyType = Constants.COMPANY_TYPE_ITC
+                viewModel.getFilesNotBackedUp(Constants.COMPANY_TYPE_ITC)
                 true
             }
-//            R.id.action_about -> {
-//                // Handle about action
-//                true
-//            }
+
+            R.id.backup_avt -> {
+                companyType = Constants.COMPANY_TYPE_AVT
+                viewModel.getFilesNotBackedUp(Constants.COMPANY_TYPE_AVT)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun uploadCurrentBackup() {
+    private fun uploadBackupFiles() {
         lottieOverlayFragment.show(supportFragmentManager, "lottie_overlay")
-        val lastCSVFile = UtilityMethods.getLastBackupFile(this)
-        try{
+        try {
             if (UtilityMethods.isNetworkAvailable(this@CustomerSelectionActivity)) {
-                if(lastCSVFile != null && lastCSVFile.exists()){
-                    lifecycleScope.launch (Dispatchers.IO) {
-                        val uploadURI = UtilityMethods().uploadCsvFile(this@CustomerSelectionActivity, lastCSVFile)
-                        if(uploadURI != null){
-                            withContext(Dispatchers.Main) {
-                                lottieOverlayFragment.dismiss()
-                                UtilityMethods.setBillNumber(
-                                    this@CustomerSelectionActivity,
-                                    billNumber = (UtilityMethods.getBillNumber(this@CustomerSelectionActivity) + 1),
-                                    UtilityMethods.getBillId(this@CustomerSelectionActivity)
-                                )
-                                Toast.makeText(
-                                    this@CustomerSelectionActivity,
-                                    "Order backed up successfully",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+                lifecycleScope.launch(Dispatchers.IO) {
+                    if (fileObjectModelsList.isNotEmpty()) {
+
+                        for (fileObject in fileObjectModelsList) {
+                            val file = File(fileObject.fileURI)
+                            UtilityMethods().uploadCsvFile(this@CustomerSelectionActivity, file)
                         }
-                        else{
-                            withContext(Dispatchers.Main) {
-                                lottieOverlayFragment.dismiss()
-                                Toast.makeText(this@CustomerSelectionActivity, "File already exists", Toast.LENGTH_SHORT).show()
-                            }
+
+                        withContext(Dispatchers.Main) {
+                            lottieOverlayFragment.dismiss()
+                            UtilityMethods.setBillNumber(
+                                this@CustomerSelectionActivity,
+                                billNumber = (UtilityMethods.getBillNumber(this@CustomerSelectionActivity) + 1),
+                                UtilityMethods.getBillId(this@CustomerSelectionActivity)
+                            )
+                            Toast.makeText(
+                                this@CustomerSelectionActivity,
+                                "Order backed up successfully",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+//                            viewModel.markFilesAsBackedUp(companyType)
                         }
                     }
                 }
@@ -270,13 +294,8 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
                     Toast.LENGTH_SHORT
                 ).show()
             }
-
-            lifecycleScope.launch(Dispatchers.IO) {
-
-            }
-        }
-        catch (ex : Exception){
-            Log.e("ERROR", "uploadCurrentBackup: $ex", )
+        } catch (ex: Exception) {
+            Log.e("ERROR", "uploadCurrentBackup: $ex")
             lottieOverlayFragment.dismiss()
         }
     }

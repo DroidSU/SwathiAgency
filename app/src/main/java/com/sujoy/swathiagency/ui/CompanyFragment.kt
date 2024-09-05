@@ -15,7 +15,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujoy.swathiagency.adapters.ItemsRecyclerAdapter
-import com.sujoy.swathiagency.data.datamodels.CompanyType
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
 import com.sujoy.swathiagency.data.datamodels.ITCItemsModel
 import com.sujoy.swathiagency.databinding.FragmentItcBinding
@@ -24,8 +23,8 @@ import com.sujoy.swathiagency.network.NetworkRepository
 import com.sujoy.swathiagency.utilities.Constants
 import com.sujoy.swathiagency.utilities.UtilityMethods
 import com.sujoy.swathiagency.utilities.UtilityMethods.Companion.showAlertDialog
-import com.sujoy.swathiagency.viewmodels.ITCVMFactory
-import com.sujoy.swathiagency.viewmodels.ITCViewModel
+import com.sujoy.swathiagency.viewmodels.CompanyVMFactory
+import com.sujoy.swathiagency.viewmodels.CompanyViewModel
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -33,21 +32,22 @@ import java.math.RoundingMode
 class CompanyFragment : Fragment(), OnItemEvent {
 
     companion object {
-        private const val CUSTOMER_MODEL_KEY = "CUSTOMER_MODEL"
-        private const val COMPANY_TYPE_KEY = "COMPANY_TYPE"
+        const val CUSTOMER_MODEL_KEY = "CUSTOMER_MODEL"
+        const val COMPANY_TYPE_KEY = "COMPANY_TYPE"
+        const val TOTAL_BILL = "TOTAL_BILL"
 
-        fun newInstance(companyType: CompanyType, customerModel: CustomerModel): CompanyFragment {
+        fun newInstance(companyType: String, customerModel: CustomerModel): CompanyFragment {
             val fragment = CompanyFragment()
             val args = Bundle()
-            args.putSerializable(COMPANY_TYPE_KEY, companyType)
+            args.putString(COMPANY_TYPE_KEY, companyType)
             args.putParcelable(CUSTOMER_MODEL_KEY, customerModel)
             fragment.arguments = args
             return fragment
         }
     }
 
-    private val viewModel: ITCViewModel by viewModels {
-        ITCVMFactory(NetworkRepository(requireContext()))
+    private val viewModel: CompanyViewModel by viewModels {
+        CompanyVMFactory(NetworkRepository(requireContext()))
     }
 
     private lateinit var binding: FragmentItcBinding
@@ -57,12 +57,11 @@ class CompanyFragment : Fragment(), OnItemEvent {
     private var categoriesAdapter: ArrayAdapter<String>? = null
     private var itemList: ArrayList<ITCItemsModel> = arrayListOf()
     private var selectedCategory: String = ""
-    private var totalBillAmount: Float = 0F
 
     private lateinit var itemsRecyclerAdapter: ItemsRecyclerAdapter
     private lateinit var lottieOverlayFragment: LottieOverlayFragment
 
-    private lateinit var companyType: CompanyType
+    private lateinit var companyType: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -77,7 +76,7 @@ class CompanyFragment : Fragment(), OnItemEvent {
         super.onViewCreated(view, savedInstanceState)
 
         selectedCustomer = arguments?.getParcelable(CUSTOMER_MODEL_KEY)!!
-        companyType = (arguments?.getSerializable(COMPANY_TYPE_KEY) as CompanyType?)!!
+        companyType = arguments?.getString(COMPANY_TYPE_KEY, Constants.COMPANY_TYPE_ITC)!!
 
         viewModel.setCustomerModel(selectedCustomer)
 
@@ -135,7 +134,9 @@ class CompanyFragment : Fragment(), OnItemEvent {
                     "ordered_item_list",
                     ArrayList(viewModel.orderedItemsList.value)
                 )
-                intent.putExtra("customer_model", selectedCustomer)
+                intent.putExtra(CUSTOMER_MODEL_KEY, selectedCustomer)
+                intent.putExtra(COMPANY_TYPE_KEY, companyType)
+                intent.putExtra(TOTAL_BILL, viewModel.totalBill.value)
                 startActivity(intent)
             }
         }
@@ -228,7 +229,7 @@ class CompanyFragment : Fragment(), OnItemEvent {
     override fun onStart() {
         super.onStart()
         if (UtilityMethods.isNetworkAvailable(requireContext())) {
-            if (companyType == CompanyType.ITC) {
+            if (companyType == Constants.COMPANY_TYPE_ITC) {
                 viewModel.fetchItemData("https://drive.google.com/uc?export=download&id=${Constants.ITC_ITEM_FILE_DRIVE_ID}")
             } else {
                 viewModel.fetchItemData("https://drive.google.com/uc?export=download&id=${Constants.AVT_ITEM_FILE_DRIVE_ID}")

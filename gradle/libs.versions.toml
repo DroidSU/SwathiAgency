@@ -24,6 +24,7 @@ lottie = "6.0.0"
 googleDrive = "v3-rev305-1.25.0"
 firebaseStorageKtx = "21.0.0"
 firebase-crashlytics = "19.0.3"
+room = "2.6.1"
 
 
 [libraries]
@@ -54,7 +55,9 @@ coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-andro
 lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx", version.ref = "firebase-crashlytics" }
-realm = { group = "io.realm.kotlin", name = "library", version = "1.10.0" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
