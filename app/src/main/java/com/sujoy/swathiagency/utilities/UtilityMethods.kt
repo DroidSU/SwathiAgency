@@ -56,23 +56,54 @@ class UtilityMethods {
             alertDialog.show()
         }
 
-        fun setBillNumber(context: Context, billNumber: Long, billId: String?) {
+        fun setBillNumber(context: Context, billNumber: Long, billId: String?, companyType: String) {
             val sharedPref =
                 context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
             val editor = sharedPref.edit()
-            editor.putLong(Constants.SHARED_PREF_BILL_NUMBER, billNumber)
-            editor.putString(Constants.SHARED_PREF_BILL_ID, billId)
+            if(companyType == Constants.COMPANY_TYPE_ITC){
+                editor.putLong(Constants.SHARED_PREF_BILL_NUMBER_ITC, billNumber)
+                editor.putString(Constants.SHARED_PREF_BILL_ID_ITC, billId)
+            }
+            else if(companyType == Constants.COMPANY_TYPE_AVT){
+                editor.putLong(Constants.SHARED_PREF_BILL_NUMBER_AVT, billNumber)
+                editor.putString(Constants.SHARED_PREF_BILL_ID_AVT, billId)
+            }
             editor.apply()
         }
 
-        fun getBillNumber(context: Context): Long {
-            return context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
-                .getLong(Constants.SHARED_PREF_BILL_NUMBER, 0L)
+        fun getBillNumber(context: Context, companyType: String): Long {
+            return when (companyType) {
+                Constants.COMPANY_TYPE_ITC -> {
+                    context.getSharedPreferences(
+                        Constants.SHARED_PREF_NAME,
+                        Context.MODE_PRIVATE
+                    )
+                        .getLong(Constants.SHARED_PREF_BILL_NUMBER_ITC, 0L)
+                }
+
+                Constants.COMPANY_TYPE_AVT -> {
+                    context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
+                        .getLong(Constants.SHARED_PREF_BILL_NUMBER_AVT, 0L)
+                }
+
+                else -> 0L
+            }
         }
 
-        fun getBillId(context: Context): String? {
-            return context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
-                .getString(Constants.SHARED_PREF_BILL_ID, "")
+        fun getBillId(context: Context, companyType: String): String? {
+            return when (companyType) {
+                Constants.COMPANY_TYPE_ITC -> {
+                    context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
+                        .getString(Constants.SHARED_PREF_BILL_ID_ITC, "")
+                }
+
+                Constants.COMPANY_TYPE_AVT -> {
+                    context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
+                        .getString(Constants.SHARED_PREF_BILL_ID_AVT, "")
+                }
+
+                else -> ""
+            }
         }
 
         fun setSalesmanName(context: Context, salesmanName: String) {
@@ -136,8 +167,8 @@ class UtilityMethods {
             val timeStamp = SimpleDateFormat("ddMMyyyy", Locale.getDefault()).format(Date())
             val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
 
-            val billNumber = getBillNumber(context)
-            val billId = getBillId(context)
+            val billNumber = getBillNumber(context, companyType)
+            val billId = getBillId(context, companyType)
             val salesmanName = getSalesmanName(context)
 
             var fileName = ""
@@ -169,31 +200,31 @@ class UtilityMethods {
             csvWriter().open(file, true) {
 
                 // Write the header
-                if (!fileExists) {
-                    writeRow(
-                        listOf(
-                            "Invoice Number",
-                            "Cash Sales",
-                            "Sales Account",
-                            "Company Name",
-                            "Salesman",
-                            "Route",
-                            "Date",
-                            "Customer Name",
-                            "Item Name",
-                            "Box Price",
-                            "Box",
-                            "Pcs",
-                            "default",
-                            "default",
-                            "default",
-                            "default",
-                            "Tax Rate",
-                            "Category",
-                            "Pcs Rate"
-                        )
-                    )
-                }
+//                if (!fileExists) {
+//                    writeRow(
+//                        listOf(
+//                            "Invoice Number",
+//                            "Cash Sales",
+//                            "Sales Account",
+//                            "Company Name",
+//                            "Salesman",
+//                            "Route",
+//                            "Date",
+//                            "Customer Name",
+//                            "Item Name",
+//                            "Box Price",
+//                            "Box",
+//                            "Pcs",
+//                            "default",
+//                            "default",
+//                            "default",
+//                            "default",
+//                            "Tax Rate",
+//                            "Category",
+//                            "Pcs Rate"
+//                        )
+//                    )
+//                }
 
                 // Write each object as a row in the CSV
                 data.forEach { item ->

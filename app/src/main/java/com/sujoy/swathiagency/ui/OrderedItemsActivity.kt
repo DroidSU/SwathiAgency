@@ -88,8 +88,9 @@ class OrderedItemsActivity : AppCompatActivity() {
         orderedItemsRecyclerAdapter = OrderedItemsRecyclerAdapter(orderedItemsList)
         binding.rvOrderedItems.layoutManager = LinearLayoutManager(this)
         binding.rvOrderedItems.adapter = orderedItemsRecyclerAdapter
-        binding.tvOrderedTotal.text = BigDecimal(totalBillAmount.toString()).setScale(2, RoundingMode.HALF_UP)
-            .toFloat().toString()
+        binding.tvOrderedTotal.text =
+            BigDecimal(totalBillAmount.toString()).setScale(2, RoundingMode.HALF_UP)
+                .toFloat().toString()
 
         lottieOverlayFragment = LottieOverlayFragment.newInstance()
 
@@ -157,8 +158,9 @@ class OrderedItemsActivity : AppCompatActivity() {
             lottieOverlayFragment.dismiss()
             UtilityMethods.setBillNumber(
                 this,
-                billNumber = UtilityMethods.getBillNumber(this) + 1,
-                UtilityMethods.getBillId(this)
+                billNumber = UtilityMethods.getBillNumber(this, companyType) + 1,
+                UtilityMethods.getBillId(this, companyType),
+                companyType
             )
             startActivity(
                 Intent(

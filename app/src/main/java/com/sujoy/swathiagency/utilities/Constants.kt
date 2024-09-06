@@ -8,10 +8,11 @@ class Constants {
         const val BACKUP_FOLDER_DRIVE_ID = "1DC8zLewF06WaaE6SDjO66Yu7p0SykKQG"
 
         const val SHARED_PREF_NAME = "swathi_agency_prefs"
-        const val SHARED_PREF_BILL_NUMBER = "bill_number"
-        const val SHARED_PREF_BILL_ID = "bill_id"
+        const val SHARED_PREF_BILL_NUMBER_ITC = "bill_number_itc"
+        const val SHARED_PREF_BILL_ID_ITC = "bill_id_itc"
+        const val SHARED_PREF_BILL_NUMBER_AVT = "bill_number_avt"
+        const val SHARED_PREF_BILL_ID_AVT = "bill_id_avt"
         const val SHARED_PREF_SALESMAN_NAME = "salesman_name"
-        const val SHARED_PREF_LAST_FILE_CREATED = "file_path"
 
         const val TABLE_FILE_OBJECTS = "FileObjects"
         const val IS_BACKED_UP = "isBackedUp"

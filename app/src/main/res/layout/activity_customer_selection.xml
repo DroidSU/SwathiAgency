@@ -21,20 +21,6 @@
         app:popupTheme="@style/CustomMenu"/>
 
     <TextView
-        android:id="@+id/tv_bill_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/bill_number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        android:layout_marginEnd="5dp"
-        android:layout_marginTop="5dp"
-        android:textSize="14sp"
-        android:textColor="@color/black"
-        android:padding="5dp"
-        android:gravity="end"/>
-
-    <TextView
         android:id="@+id/tv_choose_customer_heading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,21 +29,40 @@
         android:textColor="@color/black"
         android:gravity="center"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_bill_number"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         android:padding="8dp"/>
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/searchView_choose_customer"
+<!--    <androidx.appcompat.widget.SearchView-->
+<!--        android:id="@+id/searchView_choose_customer"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/tv_choose_customer_heading"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toStartOf="@id/iv_filter"-->
+<!--        android:layout_marginStart="10dp"-->
+<!--        android:layout_marginEnd="10dp"-->
+<!--        app:iconifiedByDefault="false"-->
+<!--        app:queryHint="Search by customer name"-->
+<!--        android:visibility="gone"/>-->
+
+    <AutoCompleteTextView
+        android:id="@+id/search_customers_dropdown"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:inputType="text"
+        android:imeOptions="actionDone"
+        android:padding="12dp"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:hint="@string/search_by_name"
         app:layout_constraintTop_toBottomOf="@id/tv_choose_customer_heading"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/iv_filter"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        app:iconifiedByDefault="false"
-        app:queryHint="Search by customer name"/>
+        android:layout_marginTop="5dp"
+        android:background="@drawable/rounded_corner_black_border"/>
 
     <ImageView
         android:id="@+id/iv_filter"
@@ -66,16 +71,17 @@
         android:src="@drawable/ic_filter_list_24"
         android:contentDescription="@string/menu"
         android:padding="8dp"
-        app:layout_constraintStart_toEndOf="@id/searchView_choose_customer"
+        app:layout_constraintStart_toEndOf="@id/search_customers_dropdown"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_choose_customer_heading"/>
+        app:layout_constraintTop_toBottomOf="@id/tv_choose_customer_heading"
+        android:layout_marginTop="5dp"/>
 
     <LinearLayout
         android:id="@+id/ll_loading_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/searchView_choose_customer"
+        app:layout_constraintTop_toBottomOf="@id/search_customers_dropdown"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -108,7 +114,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchView_choose_customer"
+        app:layout_constraintTop_toBottomOf="@+id/search_customers_dropdown"
         tools:layout="@layout/layout_customer_recycler_item"
         android:layout_marginTop="10dp"
         android:visibility="gone"/>
@@ -129,6 +135,7 @@
         app:iconSize="24dp"
         app:iconPadding="8dp"
         android:gravity="center"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

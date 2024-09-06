@@ -1,5 +1,5 @@
 package com.sujoy.swathiagency.interfaces
 
 interface OnSubmitButtonTapped {
-    fun onSubmitButtonTap(billId : String, billNumber : Long, salesmanSelected : String)
+    fun onSubmitButtonTap(billId : String, billNumber : Long)
 }

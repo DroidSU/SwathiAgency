@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.SalesmanSelectionActivity"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_welcome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="WELCOME"
+        android:gravity="center"
+        android:textSize="26sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="50dp"/>
+
+    <TextView
+        android:id="@+id/tv_choose_salesman_heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tv_welcome"
+        android:layout_marginTop="30dp"
+        android:text="Choose salesman"
+        android:gravity="center"/>
+
+    <LinearLayout
+        android:id="@+id/ll_group_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="40dp">
+
+        <LinearLayout
+            android:id="@+id/ll_salesman_1"
+            android:layout_width="150dp"
+            android:layout_height="120dp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ll_salesman_2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:gravity="center"
+            android:padding="12dp"
+            android:layout_weight="1"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="10dp">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/profile"/>
+
+            <TextView
+                android:id="@+id/tv_salesman_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Salesman Name"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="10dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_salesman_2"
+            android:layout_width="150dp"
+            android:layout_height="120dp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toEndOf="@id/ll_salesman_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:gravity="center"
+            android:padding="12dp"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/profile"/>
+
+            <TextView
+                android:id="@+id/tv_salesman_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Salesman Name"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="10dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_salesman_3"
+        android:layout_width="150dp"
+        android:layout_height="120dp"
+        android:orientation="vertical"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@id/ll_group_1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center"
+        android:layout_marginTop="50dp">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/profile"/>
+
+        <TextView
+            android:id="@+id/tv_salesman_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Salesman Name"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="10dp"/>
+
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_next_screen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="60dp"
+        android:minWidth="110dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/light_blue_600"
+        android:text="Next"
+        android:textSize="18sp"
+        app:iconSize="24dp"
+        app:iconPadding="8dp"
+        android:gravity="center"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

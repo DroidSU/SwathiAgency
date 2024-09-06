@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujoy.swathiagency.adapters.ItemsRecyclerAdapter
@@ -19,6 +20,7 @@ import com.sujoy.swathiagency.data.datamodels.CustomerModel
 import com.sujoy.swathiagency.data.datamodels.ITCItemsModel
 import com.sujoy.swathiagency.databinding.FragmentItcBinding
 import com.sujoy.swathiagency.interfaces.OnItemEvent
+import com.sujoy.swathiagency.interfaces.OnSubmitButtonTapped
 import com.sujoy.swathiagency.network.NetworkRepository
 import com.sujoy.swathiagency.utilities.Constants
 import com.sujoy.swathiagency.utilities.UtilityMethods
@@ -29,7 +31,7 @@ import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class CompanyFragment : Fragment(), OnItemEvent {
+class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
 
     companion object {
         const val CUSTOMER_MODEL_KEY = "CUSTOMER_MODEL"
@@ -62,6 +64,10 @@ class CompanyFragment : Fragment(), OnItemEvent {
     private lateinit var lottieOverlayFragment: LottieOverlayFragment
 
     private lateinit var companyType: String
+    private var billNumber = MutableLiveData<Long>()
+    private var billDialog: BillNumberDialog? = null
+    private var salesmanName: String = ""
+    private var billId: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -224,10 +230,28 @@ class CompanyFragment : Fragment(), OnItemEvent {
 //                }
             }
         }
+
+        billNumber.observe(viewLifecycleOwner) { value ->
+            if (value > 0) {
+                billId = UtilityMethods.getBillId(requireContext(), companyType)!!
+                binding.tvBillNumber.text = "Bill No. : $billId - $value"
+            }
+        }
     }
 
     override fun onStart() {
         super.onStart()
+        fetchItemList()
+
+        if (UtilityMethods.getBillNumber(requireContext(), companyType) != 0L) {
+            salesmanName = UtilityMethods.getSalesmanName(requireContext())
+            billNumber.value = UtilityMethods.getBillNumber(requireContext(), companyType)
+        } else {
+            showBillDialog()
+        }
+    }
+
+    private fun fetchItemList() {
         if (UtilityMethods.isNetworkAvailable(requireContext())) {
             if (companyType == Constants.COMPANY_TYPE_ITC) {
                 viewModel.fetchItemData("https://drive.google.com/uc?export=download&id=${Constants.ITC_ITEM_FILE_DRIVE_ID}")
@@ -245,5 +269,18 @@ class CompanyFragment : Fragment(), OnItemEvent {
 
     override fun onItemValueChanged(currentItem: ITCItemsModel) {
         viewModel.addOrderItem(currentItem)
+    }
+
+    private fun showBillDialog() {
+        billDialog = BillNumberDialog(this)
+        billDialog?.isCancelable = false
+        billDialog?.show(childFragmentManager, "bill_dialog")
+    }
+
+    override fun onSubmitButtonTap(billId: String, billNumber: Long) {
+        billDialog?.dismiss()
+        UtilityMethods.setBillNumber(requireContext(), billNumber, billId, companyType)
+        this.billId = billId
+        this.billNumber.value = billNumber
     }
 }

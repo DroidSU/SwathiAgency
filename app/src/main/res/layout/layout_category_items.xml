@@ -117,8 +117,8 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_decrement_box"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:background="@drawable/ic_minus"
                 android:padding="4dp"
                 app:elevation="10dp" />
@@ -133,14 +133,15 @@
                 android:gravity="center"
                 android:hint="0"
                 android:inputType="number"
-                android:minWidth="24dp"
+                android:minWidth="30dp"
+                android:minHeight="30dp"
                 android:textColor="@color/black"
-                android:textSize="14sp" />
+                android:textSize="14sp"/>
 
             <Button
                 android:id="@+id/btn_increment_box"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/ic_add_black" />
         </LinearLayout>
 
@@ -179,8 +180,8 @@
 
             <Button
                 android:id="@+id/btn_decrement_pcs"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:background="@drawable/ic_minus" />
 
             <EditText
@@ -193,14 +194,15 @@
                 android:gravity="center"
                 android:hint="0"
                 android:inputType="number"
-                android:minWidth="24dp"
+                android:minWidth="30dp"
+                android:minHeight="30dp"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
 
             <Button
                 android:id="@+id/btn_increment_pcs"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/ic_add_black" />
         </LinearLayout>
 
@@ -216,7 +218,8 @@
         app:layout_constraintStart_toEndOf="@id/ll_pcs_count"
         app:layout_constraintTop_toBottomOf="@id/tv_item_mrp"
         android:visibility="gone"
-        tools:visibility="visible">
+        tools:visibility="visible"
+        android:padding="4dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -226,7 +229,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
 
             <TextView
                 android:id="@+id/tv_total_rs"

@@ -41,4 +41,6 @@
     <string name="backup_orders_itc">Backup ITC orders</string>
     <string name="route">Route :</string>
     <string name="backup_orders_avt">Backup AVT orders\n</string>
+    <string name="view_orders">View Orders</string>
+    <string name="search_by_name">Search by Name</string>
 </resources>

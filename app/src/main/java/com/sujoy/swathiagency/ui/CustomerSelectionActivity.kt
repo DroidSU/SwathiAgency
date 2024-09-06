@@ -8,15 +8,14 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
-import androidx.appcompat.widget.SearchView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujoy.swathiagency.R
@@ -26,7 +25,6 @@ import com.sujoy.swathiagency.data.dbModels.FileObjectModels
 import com.sujoy.swathiagency.database.AppDatabase
 import com.sujoy.swathiagency.databinding.ActivityCustomerSelectionBinding
 import com.sujoy.swathiagency.interfaces.OnRecyclerItemClickedListener
-import com.sujoy.swathiagency.interfaces.OnSubmitButtonTapped
 import com.sujoy.swathiagency.network.NetworkRepository
 import com.sujoy.swathiagency.utilities.Constants
 import com.sujoy.swathiagency.utilities.UtilityMethods
@@ -38,21 +36,20 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedListener,
-    OnSubmitButtonTapped {
+class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedListener{
 
     private lateinit var binding: ActivityCustomerSelectionBinding
 
     private lateinit var customerRecyclerAdapter: CustomersRecyclerAdapter
     private var customerList: MutableList<CustomerModel> = mutableListOf()
     private var selectedCustomer: CustomerModel? = null
-    private var billNumber = MutableLiveData<Long>()
-    private var billDialog: BillNumberDialog? = null
     private var filterBy: Int = 0
-    private var salesmanName: String = ""
-    private var billId: String = ""
     private var fileObjectModelsList: List<FileObjectModels> = listOf()
     private var companyType = Constants.COMPANY_TYPE_ITC
+
+    private var customerFilterAdapter: ArrayAdapter<String>? = null
+    private var filterStringsList: MutableList<String> = mutableListOf()
+    private var selectedCustomerFilter: String = ""
 
     private lateinit var lottieOverlayFragment: LottieOverlayFragment
 
@@ -86,55 +83,47 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
         customerRecyclerAdapter = CustomersRecyclerAdapter(this, customerList, this)
         binding.rvCustomers.adapter = customerRecyclerAdapter
 
-        binding.searchViewChooseCustomer.setOnQueryTextListener(object :
-            SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
+        customerFilterAdapter =
+            ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, filterStringsList)
+        binding.searchCustomersDropdown.setAdapter(customerFilterAdapter)
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText.isNullOrEmpty()) {
-                    customerRecyclerAdapter.updateData(customerList)
-                } else {
-                    var filteredList = listOf<CustomerModel>()
-                    filteredList = if (filterBy == 0) {
-                        customerList.filter {
-                            it.customerName.contains(
-                                newText,
-                                ignoreCase = true
-                            )
-                        }
-                    } else {
-                        customerList.filter {
-                            it.customerRoute.contains(
-                                newText,
-                                ignoreCase = true
-                            )
-                        }
-                    }
-                    customerRecyclerAdapter.updateData(filteredList)
+        binding.searchCustomersDropdown.setOnItemClickListener { _, _, index, _ ->
+            UtilityMethods.hideKeyBoard(binding.searchCustomersDropdown, this)
+            selectedCustomerFilter = filterStringsList[index]
+            val filteredList: List<CustomerModel> = if (filterBy == 0) {
+                customerList.filter {
+                    it.customerName.contains(
+                        selectedCustomerFilter,
+                        ignoreCase = true
+                    )
                 }
-                return true
+            } else {
+                customerList.filter {
+                    it.customerRoute.contains(
+                        selectedCustomerFilter,
+                        ignoreCase = true
+                    )
+                }
             }
 
-        })
+            customerRecyclerAdapter.updateData(filteredList)
+        }
 
         lifecycleScope.launch {
             viewModel.csvData.collect { data ->
                 if (data.isNotEmpty()) {
                     customerList = data
                     customerList.sortBy { item -> item.customerName }
+                    filterStringsList = customerList.map { it.customerName }.toMutableList()
+                    customerFilterAdapter?.let {
+                        it.clear()
+                        it.addAll(filterStringsList)
+                        it.notifyDataSetChanged()
+                    }
                     customerRecyclerAdapter.updateData(customerList)
                     binding.llLoadingView.visibility = View.GONE
                     binding.rvCustomers.visibility = View.VISIBLE
                 }
-            }
-        }
-
-        billNumber.observe(this) { value ->
-            if (value > 0) {
-                billId = UtilityMethods.getBillId(this)!!
-                binding.tvBillNumber.text = "Bill No. : $billId - $value"
             }
         }
 
@@ -171,17 +160,25 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
             when (menuItem.itemId) {
                 R.id.menu_opt_1 -> {
                     filterBy = 0
-                    binding.searchViewChooseCustomer.queryHint = "Search by customer name"
-                    customerList.sortBy { item -> item.customerName }
-                    customerRecyclerAdapter.updateData(customerList)
+                    binding.searchCustomersDropdown.setHint(R.string.filter_by_customer_name)
+                    filterStringsList = customerList.map { it.customerName }.toMutableList()
+                    customerFilterAdapter?.let {
+                        it.clear()
+                        it.addAll(filterStringsList)
+                        it.notifyDataSetChanged()
+                    }
                     true
                 }
 
                 R.id.menu_opt_2 -> {
                     filterBy = 1
-                    binding.searchViewChooseCustomer.queryHint = "Search by route"
-                    customerList.sortBy { item -> item.customerRoute }
-                    customerRecyclerAdapter.updateData(customerList)
+                    binding.searchCustomersDropdown.setHint(R.string.filter_by_customer_route)
+                    filterStringsList = customerList.map { it.customerRoute }.toMutableList()
+                    customerFilterAdapter?.let {
+                        it.clear()
+                        it.addAll(filterStringsList)
+                        it.notifyDataSetChanged()
+                    }
                     true
                 }
 
@@ -194,13 +191,6 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
     override fun onStart() {
         super.onStart()
         fetchCustomerList()
-
-        if (UtilityMethods.getBillNumber(this) != 0L) {
-            salesmanName = UtilityMethods.getSalesmanName(this)
-            billNumber.value = UtilityMethods.getBillNumber(this)
-        } else {
-            showBillDialog()
-        }
     }
 
     private fun fetchCustomerList() {
@@ -215,24 +205,11 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
         }
     }
 
-    private fun showBillDialog() {
-        billDialog = BillNumberDialog(this)
-        billDialog?.isCancelable = false
-        billDialog?.show(supportFragmentManager, "bill_dialog")
-    }
+
 
     override fun onCustomerClicked(customer: CustomerModel) {
         selectedCustomer = customer
         binding.btnNextScreen.visibility = View.VISIBLE
-    }
-
-    override fun onSubmitButtonTap(billId: String, billNumber: Long, salesmanSelected: String) {
-        salesmanName = salesmanSelected
-        billDialog?.dismiss()
-        UtilityMethods.setBillNumber(this, billNumber, billId)
-        UtilityMethods.setSalesmanName(this, salesmanSelected)
-        this.billId = billId
-        this.billNumber.value = billNumber
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -253,6 +230,7 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
                 viewModel.getFilesNotBackedUp(Constants.COMPANY_TYPE_AVT)
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
