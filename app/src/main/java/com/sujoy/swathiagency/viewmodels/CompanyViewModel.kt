@@ -1,12 +1,14 @@
 package com.sujoy.swathiagency.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
-import com.sujoy.swathiagency.data.datamodels.ITCItemsModel
+import com.sujoy.swathiagency.data.datamodels.ItemsModel
 import com.sujoy.swathiagency.network.NetworkRepository
+import com.sujoy.swathiagency.utilities.UtilityMethods
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,30 +16,39 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class CompanyViewModel(private val repository: NetworkRepository) : ViewModel() {
-    private val _itemData = MutableStateFlow<ArrayList<ITCItemsModel>>(arrayListOf())
-    val itemData: StateFlow<ArrayList<ITCItemsModel>> = _itemData
+    private val _itemData = MutableStateFlow<ArrayList<ItemsModel>>(arrayListOf())
+    val itemData: StateFlow<ArrayList<ItemsModel>> = _itemData
     private val _categories = MutableStateFlow<MutableList<String>>(arrayListOf())
     val categories: StateFlow<MutableList<String>> = _categories
     private val _totalBill = MutableStateFlow(0.0F)
     val totalBill: StateFlow<Float> = _totalBill
     private val _selectedCustomerModel = MutableLiveData<CustomerModel>()
     val selectedCustomerModel: LiveData<CustomerModel> get() = _selectedCustomerModel
-    private val _itemListOfSelectedCategories = MutableStateFlow<MutableList<ITCItemsModel>>(
+    private val _itemListOfSelectedCategories = MutableStateFlow<MutableList<ItemsModel>>(
         mutableListOf()
     )
-    val itemListOfSelectedCategories: StateFlow<MutableList<ITCItemsModel>> =
+    val itemListOfSelectedCategories: StateFlow<MutableList<ItemsModel>> =
         _itemListOfSelectedCategories
 
-    private val _orderedItemsList = MutableStateFlow<MutableList<ITCItemsModel>>(mutableListOf())
-    val orderedItemsList : StateFlow<MutableList<ITCItemsModel>> = _orderedItemsList
+    private val _orderedItemsList = MutableStateFlow<MutableList<ItemsModel>>(mutableListOf())
+    val orderedItemsList : StateFlow<MutableList<ItemsModel>> = _orderedItemsList
 
-    fun fetchItemData(fileUrl: String) {
+    fun fetchItemData(context : Context, fileUrl: String, companyType : String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val data = repository.fetchITCItemsCSV(fileUrl)
+            if(UtilityMethods.isNetworkAvailable(context)){
+                val data = repository.downloadItemsCSV(companyType)
 
-            withContext(Dispatchers.Main) {
-                _itemData.value = data
-                getAllCategories()
+                withContext(Dispatchers.Main) {
+                    _itemData.value = data
+                    getAllCategories()
+                }
+            }
+            else{
+                val data = repository.getLocalItemsCSV(companyType)
+                withContext(Dispatchers.Main) {
+                    _itemData.value = data
+                    getAllCategories()
+                }
             }
         }
     }
@@ -69,7 +80,7 @@ class CompanyViewModel(private val repository: NetworkRepository) : ViewModel() 
         _selectedCustomerModel.value = selectedCustomerModel
     }
 
-    fun addOrderItem(currentItem : ITCItemsModel){
+    fun addOrderItem(currentItem : ItemsModel){
         _orderedItemsList.value.removeIf { it.itemName == currentItem.itemName && (currentItem.numberOfBoxesOrdered > 0 || currentItem.numberOfPcsOrdered > 0) }
 
         if (currentItem.numberOfBoxesOrdered > 0 || currentItem.numberOfPcsOrdered > 0) {

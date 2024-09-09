@@ -1,7 +1,6 @@
 package com.sujoy.swathiagency.utilities
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
@@ -13,7 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import com.google.firebase.storage.FirebaseStorage
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
-import com.sujoy.swathiagency.data.datamodels.ITCItemsModel
+import com.sujoy.swathiagency.data.datamodels.ItemsModel
 import kotlinx.coroutines.tasks.await
 import java.io.File
 import java.text.SimpleDateFormat
@@ -56,15 +55,19 @@ class UtilityMethods {
             alertDialog.show()
         }
 
-        fun setBillNumber(context: Context, billNumber: Long, billId: String?, companyType: String) {
+        fun setBillNumber(
+            context: Context,
+            billNumber: Long,
+            billId: String?,
+            companyType: String
+        ) {
             val sharedPref =
                 context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
             val editor = sharedPref.edit()
-            if(companyType == Constants.COMPANY_TYPE_ITC){
+            if (companyType == Constants.COMPANY_TYPE_ITC) {
                 editor.putLong(Constants.SHARED_PREF_BILL_NUMBER_ITC, billNumber)
                 editor.putString(Constants.SHARED_PREF_BILL_ID_ITC, billId)
-            }
-            else if(companyType == Constants.COMPANY_TYPE_AVT){
+            } else if (companyType == Constants.COMPANY_TYPE_AVT) {
                 editor.putLong(Constants.SHARED_PREF_BILL_NUMBER_AVT, billNumber)
                 editor.putString(Constants.SHARED_PREF_BILL_ID_AVT, billId)
             }
@@ -124,7 +127,7 @@ class UtilityMethods {
             return (this * context.resources.displayMetrics.density).toInt()
         }
 
-        fun calculateItemTotalValue(item: ITCItemsModel) {
+        fun calculateItemTotalValue(item: ItemsModel) {
             var total = 0F
 
             val boxTotal = item.numberOfBoxesOrdered.toFloat() * item.taxableBoxRate.toFloat()
@@ -159,7 +162,7 @@ class UtilityMethods {
 
     fun createOrUpdateCsvFile(
         context: Context,
-        data: List<ITCItemsModel>,
+        data: List<ItemsModel>,
         customerModel: CustomerModel,
         companyType: String
     ): File? {
@@ -171,9 +174,7 @@ class UtilityMethods {
             val billId = getBillId(context, companyType)
             val salesmanName = getSalesmanName(context)
 
-            var fileName = ""
-
-            fileName = when (companyType) {
+            val fileName: String = when (companyType) {
                 Constants.COMPANY_TYPE_ITC -> {
                     "ITC_$timeStamp.csv"
                 }
@@ -254,13 +255,13 @@ class UtilityMethods {
                 }
             }
 
-            context.getSharedPreferences(Constants.SHARED_PREF_NAME, MODE_PRIVATE)
             return file
         } catch (ex: Exception) {
             Log.e("File not created", "createCsvFile: $ex")
             return null
         }
     }
+
 
     // Upload the CSV file to Firebase Storage
     suspend fun uploadCsvFile(context: Context, csvFile: File): Uri? {

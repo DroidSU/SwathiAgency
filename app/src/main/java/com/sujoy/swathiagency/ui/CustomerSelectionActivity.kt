@@ -194,15 +194,7 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
     }
 
     private fun fetchCustomerList() {
-        if (UtilityMethods.isNetworkAvailable(this)) {
-            viewModel.loadCsvData("https://drive.google.com/uc?export=download&id=${Constants.CUSTOMER_FILE_DRIVE_ID}")
-        } else {
-            Toast.makeText(
-                this,
-                "No internet connection available!",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+        viewModel.getCustomerData(this)
     }
 
 

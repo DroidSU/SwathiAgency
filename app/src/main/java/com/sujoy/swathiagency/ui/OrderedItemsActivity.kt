@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujoy.swathiagency.R
 import com.sujoy.swathiagency.adapters.OrderedItemsRecyclerAdapter
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
-import com.sujoy.swathiagency.data.datamodels.ITCItemsModel
+import com.sujoy.swathiagency.data.datamodels.ItemsModel
 import com.sujoy.swathiagency.data.dbModels.FileObjectModels
 import com.sujoy.swathiagency.database.AppDatabase
 import com.sujoy.swathiagency.databinding.ActivityOrderedItemsBinding
@@ -35,7 +35,7 @@ import java.math.RoundingMode
 class OrderedItemsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityOrderedItemsBinding
-    private var orderedItemsList: ArrayList<ITCItemsModel> = arrayListOf()
+    private var orderedItemsList: ArrayList<ItemsModel> = arrayListOf()
     private lateinit var customerModel: CustomerModel
     private var totalBillAmount: Float = 0F
     private lateinit var orderedItemsRecyclerAdapter: OrderedItemsRecyclerAdapter

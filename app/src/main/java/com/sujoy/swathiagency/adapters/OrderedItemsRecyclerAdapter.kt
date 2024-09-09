@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sujoy.swathiagency.R
-import com.sujoy.swathiagency.data.datamodels.ITCItemsModel
+import com.sujoy.swathiagency.data.datamodels.ItemsModel
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class OrderedItemsRecyclerAdapter(private var orderedItemList: MutableList<ITCItemsModel>) :
+class OrderedItemsRecyclerAdapter(private var orderedItemList: MutableList<ItemsModel>) :
     RecyclerView.Adapter<OrderedItemsRecyclerAdapter.OrderedItemsViewHolder>() {
 
     inner class OrderedItemsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

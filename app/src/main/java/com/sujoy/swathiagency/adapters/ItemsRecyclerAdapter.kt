@@ -14,7 +14,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.sujoy.swathiagency.R
-import com.sujoy.swathiagency.data.datamodels.ITCItemsModel
+import com.sujoy.swathiagency.data.datamodels.ItemsModel
 import com.sujoy.swathiagency.interfaces.OnItemEvent
 import com.sujoy.swathiagency.utilities.UtilityMethods
 import com.sujoy.swathiagency.viewmodels.CompanyViewModel
@@ -22,7 +22,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 class ItemsRecyclerAdapter(
-    private var itemList: MutableList<ITCItemsModel>,
+    private var itemList: MutableList<ItemsModel>,
     private var itcViewModel: CompanyViewModel,
     private val onItemEvent: OnItemEvent,
     private val context: Context
@@ -113,7 +113,7 @@ class ItemsRecyclerAdapter(
         setDataOnViews(holder, currentItem)
     }
 
-    private fun setDataOnViews(holder: ItemsViewHolder, currentItem: ITCItemsModel) {
+    private fun setDataOnViews(holder: ItemsViewHolder, currentItem: ItemsModel) {
         // Store reference to listeners
         val boxTextWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -184,7 +184,7 @@ class ItemsRecyclerAdapter(
 
     private fun updateTotalValue(
         holder: ItemsViewHolder,
-        currentItem: ITCItemsModel
+        currentItem: ItemsModel
     ) {
         UtilityMethods.calculateItemTotalValue(currentItem)
         holder.textViewTotalValue.text =
@@ -200,7 +200,7 @@ class ItemsRecyclerAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateData(
-        newItems: MutableList<ITCItemsModel>
+        newItems: MutableList<ItemsModel>
     ) {
         itemList.clear()
         itemList.addAll(newItems)

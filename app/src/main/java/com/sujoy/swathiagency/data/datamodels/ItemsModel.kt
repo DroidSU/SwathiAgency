@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class ITCItemsModel(
+data class ItemsModel(
     val itemName: String,
     var availableQuantity: String,
     var numberOfPcs: String,

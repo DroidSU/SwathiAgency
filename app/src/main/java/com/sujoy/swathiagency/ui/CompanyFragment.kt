@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
@@ -17,7 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujoy.swathiagency.adapters.ItemsRecyclerAdapter
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
-import com.sujoy.swathiagency.data.datamodels.ITCItemsModel
+import com.sujoy.swathiagency.data.datamodels.ItemsModel
 import com.sujoy.swathiagency.databinding.FragmentItcBinding
 import com.sujoy.swathiagency.interfaces.OnItemEvent
 import com.sujoy.swathiagency.interfaces.OnSubmitButtonTapped
@@ -57,7 +56,7 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
     private lateinit var selectedCustomer: CustomerModel
     private var categories: MutableList<String> = mutableListOf()
     private var categoriesAdapter: ArrayAdapter<String>? = null
-    private var itemList: ArrayList<ITCItemsModel> = arrayListOf()
+    private var itemList: ArrayList<ItemsModel> = arrayListOf()
     private var selectedCategory: String = ""
 
     private lateinit var itemsRecyclerAdapter: ItemsRecyclerAdapter
@@ -252,22 +251,14 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
     }
 
     private fun fetchItemList() {
-        if (UtilityMethods.isNetworkAvailable(requireContext())) {
-            if (companyType == Constants.COMPANY_TYPE_ITC) {
-                viewModel.fetchItemData("https://drive.google.com/uc?export=download&id=${Constants.ITC_ITEM_FILE_DRIVE_ID}")
-            } else {
-                viewModel.fetchItemData("https://drive.google.com/uc?export=download&id=${Constants.AVT_ITEM_FILE_DRIVE_ID}")
-            }
+        if (companyType == Constants.COMPANY_TYPE_ITC) {
+            viewModel.fetchItemData(requireContext(),"https://drive.google.com/uc?export=download&id=${Constants.ITC_ITEM_FILE_DRIVE_ID}", companyType)
         } else {
-            Toast.makeText(
-                requireContext(),
-                "No internet connection available!",
-                Toast.LENGTH_SHORT
-            ).show()
+            viewModel.fetchItemData(requireContext(),"https://drive.google.com/uc?export=download&id=${Constants.AVT_ITEM_FILE_DRIVE_ID}", companyType)
         }
     }
 
-    override fun onItemValueChanged(currentItem: ITCItemsModel) {
+    override fun onItemValueChanged(currentItem: ItemsModel) {
         viewModel.addOrderItem(currentItem)
     }
 

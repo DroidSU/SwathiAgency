@@ -1,7 +1,7 @@
 package com.sujoy.swathiagency.interfaces
 
-import com.sujoy.swathiagency.data.datamodels.ITCItemsModel
+import com.sujoy.swathiagency.data.datamodels.ItemsModel
 
 interface OnItemEvent {
-    fun onItemValueChanged(currentItem : ITCItemsModel)
+    fun onItemValueChanged(currentItem : ItemsModel)
 }
