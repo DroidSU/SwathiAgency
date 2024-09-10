@@ -58,26 +58,17 @@ class ItemsRecyclerAdapter(
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ItemsViewHolder, position: Int) {
-//        val currentItem =
-//        val itemInPos = itcViewModel.itemData.value.indexOf(itemInCategoryList)
-//        val currentItem = itcViewModel.itemData.value[itemInPos]
-
-        var currentItem = itemList[position]
+        val currentItem = itemList[position]
 
         holder.tvItemName.text = currentItem.itemName
         holder.textViewAvailable.text = currentItem.availableQuantity
-        if(currentItem.availableQuantity.toInt() < 0)
+        if (currentItem.availableQuantity.toFloatOrNull() == null || currentItem.availableQuantity.toFloat() < 0F)
             holder.textViewAvailable.setTextColor(context.getColor(android.R.color.holo_red_light))
         holder.textViewMRP.text = currentItem.mrp
 
         holder.mainConstraintLayout.setOnClickListener {
-//            currentItem.selected = !currentItem.selected
-
-            if (currentItem.selected && (currentItem.numberOfBoxesOrdered == 0 && currentItem.numberOfPcsOrdered == 0)) {
-                currentItem.selected = false
-            } else {
-                currentItem.selected = true
-            }
+            currentItem.selected =
+                !(currentItem.selected && (currentItem.numberOfBoxesOrdered == 0 && currentItem.numberOfPcsOrdered == 0))
 
             setDataOnViews(holder, currentItem)
         }
@@ -158,16 +149,16 @@ class ItemsRecyclerAdapter(
             holder.boxCountEditText.removeTextChangedListener(boxTextWatcher)
             holder.pcsCountEditText.removeTextChangedListener(pcsTextWatcher)
 
-            if(currentItem.numberOfBoxesOrdered > 0)
+            if (currentItem.numberOfBoxesOrdered > 0)
                 holder.boxCountEditText.setText(currentItem.numberOfBoxesOrdered.toString())
-            else{
+            else {
                 holder.boxCountEditText.setText("")
                 holder.boxCountEditText.hint = "0"
             }
 
-            if(currentItem.numberOfPcsOrdered > 0)
+            if (currentItem.numberOfPcsOrdered > 0)
                 holder.pcsCountEditText.setText(currentItem.numberOfPcsOrdered.toString())
-            else{
+            else {
                 holder.pcsCountEditText.setText("")
                 holder.pcsCountEditText.hint = "0"
             }

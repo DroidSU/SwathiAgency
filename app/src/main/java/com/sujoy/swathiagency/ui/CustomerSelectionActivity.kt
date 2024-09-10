@@ -87,9 +87,19 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
             ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, filterStringsList)
         binding.searchCustomersDropdown.setAdapter(customerFilterAdapter)
 
-        binding.searchCustomersDropdown.setOnItemClickListener { _, _, index, _ ->
+        binding.searchCustomersDropdown.setOnClickListener {
+            binding.searchCustomersDropdown.showDropDown()
+        }
+
+        binding.searchCustomersDropdown.setOnFocusChangeListener { view, hasFocus ->
+            if (hasFocus) {
+                binding.searchCustomersDropdown.showDropDown()
+            }
+        }
+
+        binding.searchCustomersDropdown.setOnItemClickListener { parent, _, position, _ ->
             UtilityMethods.hideKeyBoard(binding.searchCustomersDropdown, this)
-            selectedCustomerFilter = filterStringsList[index]
+            selectedCustomerFilter = parent.getItemAtPosition(position).toString()
             val filteredList: List<CustomerModel> = if (filterBy == 0) {
                 customerList.filter {
                     it.customerName.contains(
@@ -114,7 +124,7 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
                 if (data.isNotEmpty()) {
                     customerList = data
                     customerList.sortBy { item -> item.customerName }
-                    filterStringsList = customerList.map { it.customerName }.toMutableList()
+                    filterStringsList = customerList.map { it.customerName }.distinct().toMutableList()
                     customerFilterAdapter?.let {
                         it.clear()
                         it.addAll(filterStringsList)
@@ -161,7 +171,7 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
                 R.id.menu_opt_1 -> {
                     filterBy = 0
                     binding.searchCustomersDropdown.setHint(R.string.filter_by_customer_name)
-                    filterStringsList = customerList.map { it.customerName }.toMutableList()
+                    filterStringsList = customerList.map { it.customerName }.distinct().toMutableList()
                     customerFilterAdapter?.let {
                         it.clear()
                         it.addAll(filterStringsList)
@@ -173,7 +183,7 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
                 R.id.menu_opt_2 -> {
                     filterBy = 1
                     binding.searchCustomersDropdown.setHint(R.string.filter_by_customer_route)
-                    filterStringsList = customerList.map { it.customerRoute }.toMutableList()
+                    filterStringsList = customerList.map { it.customerRoute }.distinct().toMutableList()
                     customerFilterAdapter?.let {
                         it.clear()
                         it.addAll(filterStringsList)

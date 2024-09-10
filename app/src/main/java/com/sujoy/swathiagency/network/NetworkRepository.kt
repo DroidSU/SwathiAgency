@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageException
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
 import com.sujoy.swathiagency.data.datamodels.ItemsModel
 import com.sujoy.swathiagency.utilities.Constants
@@ -35,7 +36,9 @@ class NetworkRepository(private val context: Context) {
                 Log.d("File downloaded", "File downloaded to: ${localFile.absolutePath}")
             }.addOnFailureListener { exception ->
                 // Handle any errors
-                println("Download failed: ${exception.message}")
+                val errorCode = (exception as StorageException).errorCode
+                val errorMessage = exception.message
+                Log.e("Download Failed", "$errorCode : $errorMessage")
             }
 
 
@@ -121,7 +124,7 @@ class NetworkRepository(private val context: Context) {
         val storageRef = FirebaseStorage.getInstance().reference
 
         return withContext(Dispatchers.IO) {
-            val storageFileRef = storageRef.child("SYNC/ITC.csv")
+            val storageFileRef = if (companyType == Constants.COMPANY_TYPE_ITC) storageRef.child("SYNC/ITC.csv") else storageRef.child("SYNC/AVT.csv")
             val inputStream = storageFileRef.stream.await().stream
             val csvString = inputStream.bufferedReader().use(BufferedReader::readText)
 
