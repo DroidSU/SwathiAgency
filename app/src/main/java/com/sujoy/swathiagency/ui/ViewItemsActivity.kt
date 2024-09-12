@@ -20,6 +20,7 @@ class ViewItemsActivity : AppCompatActivity() {
 
     private var selectedCustomer: CustomerModel? = null
     private lateinit var viewPagerAdapter: CompanyViewPagerAdapter
+    private var currentItem = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,9 +44,11 @@ class ViewItemsActivity : AppCompatActivity() {
         })
 
         selectedCustomer = intent.getParcelableExtra("customer_model")
+        currentItem = intent.getIntExtra("current_item", 0)
 
         viewPagerAdapter = selectedCustomer?.let { CompanyViewPagerAdapter(this, it) }!!
         binding.viewpagerCompany.adapter = viewPagerAdapter
+        binding.viewpagerCompany.setCurrentItem(currentItem, true)
 
         TabLayoutMediator(
             binding.tlCompanyTabs,

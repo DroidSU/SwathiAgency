@@ -28,7 +28,7 @@
     <string name="available">Available :</string>
     <string name="box">Box</string>
     <string name="pcs">Pcs</string>
-    <string name="total">Total</string>
+    <string name="total">Total : </string>
     <string name="rs">Rs.</string>
     <string name="select_salesman">Select salesman</string>
     <string name="menu">Menu</string>

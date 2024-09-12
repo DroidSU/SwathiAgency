@@ -62,11 +62,14 @@ class ItemsRecyclerAdapter(
 
         holder.tvItemName.text = currentItem.itemName
         holder.textViewAvailable.text = currentItem.availableQuantity
+
         if (currentItem.availableQuantity.toFloatOrNull() == null || currentItem.availableQuantity.toFloat() < 0F)
             holder.textViewAvailable.setTextColor(context.getColor(android.R.color.holo_red_light))
+
         holder.textViewMRP.text = currentItem.mrp
 
         holder.mainConstraintLayout.setOnClickListener {
+            UtilityMethods.hideKeyBoard(holder.mainConstraintLayout, context)
             currentItem.selected =
                 !(currentItem.selected && (currentItem.numberOfBoxesOrdered == 0 && currentItem.numberOfPcsOrdered == 0))
 
@@ -83,7 +86,12 @@ class ItemsRecyclerAdapter(
         holder.boxDecrementButton.setOnClickListener {
             if (holder.boxCountContainer.isEnabled && currentItem.numberOfBoxesOrdered > 0) {
                 currentItem.numberOfBoxesOrdered -= 1
-                holder.boxCountEditText.setText(currentItem.numberOfBoxesOrdered.toString())
+                if(currentItem.numberOfBoxesOrdered == 0){
+                    holder.boxCountEditText.setText("")
+                    holder.boxCountEditText.hint = "0"
+                }else{
+                    holder.boxCountEditText.setText(currentItem.numberOfBoxesOrdered.toString())
+                }
             }
         }
 
@@ -97,7 +105,12 @@ class ItemsRecyclerAdapter(
         holder.pcsDecrementButton.setOnClickListener {
             if (holder.pcsCountContainer.isEnabled && currentItem.numberOfPcsOrdered > 0) {
                 currentItem.numberOfPcsOrdered -= 1
-                holder.pcsCountEditText.setText(currentItem.numberOfPcsOrdered.toString())
+                if(currentItem.numberOfPcsOrdered == 0){
+                    holder.pcsCountEditText.setText("")
+                    holder.pcsCountEditText.hint = "0"
+                }else{
+                    holder.pcsCountEditText.setText(currentItem.numberOfPcsOrdered.toString())
+                }
             }
         }
 

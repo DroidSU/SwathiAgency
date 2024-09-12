@@ -6,10 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.sujoy.swathiagency.data.dbModels.FileObjectModels
+import com.sujoy.swathiagency.data.dbModels.CustomerOrderModel
+import com.sujoy.swathiagency.data.dbModels.OrderFileModel
 import com.sujoy.swathiagency.utilities.Constants
 
-@Database(entities = [FileObjectModels::class], version = 2, exportSchema = false)
+@Database(entities = [OrderFileModel::class, CustomerOrderModel::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun orderDao(): OrderDao

@@ -19,7 +19,8 @@ import com.sujoy.swathiagency.R
 import com.sujoy.swathiagency.adapters.OrderedItemsRecyclerAdapter
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
 import com.sujoy.swathiagency.data.datamodels.ItemsModel
-import com.sujoy.swathiagency.data.dbModels.FileObjectModels
+import com.sujoy.swathiagency.data.dbModels.CustomerOrderModel
+import com.sujoy.swathiagency.data.dbModels.OrderFileModel
 import com.sujoy.swathiagency.database.AppDatabase
 import com.sujoy.swathiagency.databinding.ActivityOrderedItemsBinding
 import com.sujoy.swathiagency.utilities.Constants
@@ -40,6 +41,7 @@ class OrderedItemsActivity : AppCompatActivity() {
     private var totalBillAmount: Float = 0F
     private lateinit var orderedItemsRecyclerAdapter: OrderedItemsRecyclerAdapter
     private var companyType = Constants.COMPANY_TYPE_ITC
+    private var orderId: String = ""
 
 
     // Register the permission request callback
@@ -102,7 +104,12 @@ class OrderedItemsActivity : AppCompatActivity() {
         }
 
         binding.btnCancelOrder.setOnClickListener {
-            startActivity(Intent(this, ViewItemsActivity::class.java))
+            startActivity(
+                Intent(this, ViewItemsActivity::class.java).putExtra(
+                    "customer_model",
+                    customerModel
+                )
+            )
             finish()
         }
     }
@@ -162,26 +169,50 @@ class OrderedItemsActivity : AppCompatActivity() {
                 UtilityMethods.getBillId(this, companyType),
                 companyType
             )
-            startActivity(
-                Intent(
-                    this,
-                    CustomerSelectionActivity::class.java
+
+            if(companyType == Constants.COMPANY_TYPE_ITC){
+                startActivity(
+                    Intent(this, ViewItemsActivity::class.java).putExtra(
+                        "customer_model",
+                        customerModel
+                    ).putExtra("current_item", 1)
                 )
-            )
+            }
+            else{
+                startActivity(
+                    Intent(this, CustomerSelectionActivity::class.java)
+                )
+            }
             finish()
         }
     }
 
     private fun saveOrderInDB(csvFile: File) {
-        val orderFileDBObject = FileObjectModels(
+        orderId = "${customerModel.customerName}_${UtilityMethods.getCurrentDateString("ddMMyyyy")}"
+
+        val orderFileDBObject = OrderFileModel(
             fileName = csvFile.nameWithoutExtension,
             createdBy = customerModel.customerName,
-            createdOn = "",
+            createdOn = UtilityMethods.getCurrentDateString("dd-MM-yyyy"),
             fileURI = csvFile.absolutePath,
-            companyName = companyType
+            companyName = companyType,
+            customerName = customerModel.customerName
         )
 
-        viewModel.createOrderFileInDB(this, orderFileDBObject)
+        viewModel.createOrderFileInDB(orderFileDBObject)
+        var companyOrderModel: CustomerOrderModel? = viewModel.getCompanyOrderObject(orderId)
+        if (companyOrderModel == null) {
+            companyOrderModel = CustomerOrderModel(
+                orderId = orderId,
+                customerName = customerModel.customerName,
+                orderTotal = totalBillAmount,
+                date = UtilityMethods.getCurrentDateString("dd-MM-yyyy")
+            )
+            viewModel.createCompanyOrderObject(companyOrderModel)
+        } else {
+            companyOrderModel.orderTotal += totalBillAmount
+            viewModel.createCompanyOrderObject(companyOrderModel)
+        }
     }
 
     private fun showPermissionRationale() {

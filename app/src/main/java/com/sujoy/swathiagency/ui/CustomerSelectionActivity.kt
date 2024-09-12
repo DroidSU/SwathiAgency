@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujoy.swathiagency.R
 import com.sujoy.swathiagency.adapters.CustomersRecyclerAdapter
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
-import com.sujoy.swathiagency.data.dbModels.FileObjectModels
+import com.sujoy.swathiagency.data.dbModels.OrderFileModel
 import com.sujoy.swathiagency.database.AppDatabase
 import com.sujoy.swathiagency.databinding.ActivityCustomerSelectionBinding
 import com.sujoy.swathiagency.interfaces.OnRecyclerItemClickedListener
@@ -44,7 +44,7 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
     private var customerList: MutableList<CustomerModel> = mutableListOf()
     private var selectedCustomer: CustomerModel? = null
     private var filterBy: Int = 0
-    private var fileObjectModelsList: List<FileObjectModels> = listOf()
+    private var fileObjectModelsList: List<OrderFileModel> = listOf()
     private var companyType = Constants.COMPANY_TYPE_ITC
 
     private var customerFilterAdapter: ArrayAdapter<String>? = null
@@ -233,6 +233,11 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
                 true
             }
 
+            R.id.view_orders -> {
+                startActivity(Intent(this, ViewOrdersActivity::class.java))
+                true
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -246,7 +251,7 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
 
                         for (fileObject in fileObjectModelsList) {
                             val file = File(fileObject.fileURI)
-                            UtilityMethods().uploadCsvFile(this@CustomerSelectionActivity, file)
+                            UtilityMethods().backupItemsCSVFile(this@CustomerSelectionActivity, file, fileObject.customerName)
                         }
 
                         withContext(Dispatchers.Main) {

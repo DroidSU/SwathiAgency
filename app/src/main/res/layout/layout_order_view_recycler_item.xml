@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:padding="5dp"
+    android:background="@color/app_secondary_color">
+
+    <TextView
+        android:id="@+id/tv_customer_order_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="Date"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:background="@drawable/rounded_corner_black_border"
+        android:layout_marginEnd="5dp"
+        android:padding="2dp"/>
+
+    <TextView
+        android:id="@+id/tv_customer_order_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="Name"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:background="@drawable/rounded_corner_black_border"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:padding="2dp"/>
+
+    <TextView
+        android:id="@+id/tv_customer_order_total"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="TOT VALUE"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:background="@drawable/rounded_corner_black_border"
+        android:layout_marginStart="5dp"
+        android:padding="2dp"/>
+</LinearLayout>

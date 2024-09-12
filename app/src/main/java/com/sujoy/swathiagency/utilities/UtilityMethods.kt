@@ -13,6 +13,7 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import com.google.firebase.storage.FirebaseStorage
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
 import com.sujoy.swathiagency.data.datamodels.ItemsModel
+import com.sujoy.swathiagency.data.dbModels.CustomerOrderModel
 import kotlinx.coroutines.tasks.await
 import java.io.File
 import java.text.SimpleDateFormat
@@ -168,7 +169,7 @@ class UtilityMethods {
     ): File? {
         try {
             val timeStamp = SimpleDateFormat("ddMMyyyy", Locale.getDefault()).format(Date())
-            val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
+            val date = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())
 
             val billNumber = getBillNumber(context, companyType)
             val billId = getBillId(context, companyType)
@@ -176,7 +177,7 @@ class UtilityMethods {
 
             val fileName: String = when (companyType) {
                 Constants.COMPANY_TYPE_ITC -> {
-                    "ITC_$timeStamp.csv"
+                    "${customerModel.customerName[2]}_ITC_$timeStamp.csv"
                 }
 
                 Constants.COMPANY_TYPE_AVT -> {
@@ -195,8 +196,6 @@ class UtilityMethods {
                 // Internal storage for devices below Android 10
                 File(context.filesDir, fileName)
             }
-
-            val fileExists = file.exists()
 
             csvWriter().open(file, true) {
 
@@ -240,16 +239,16 @@ class UtilityMethods {
                             date,
                             customerModel.customerName,
                             item.itemName,
-                            item.taxableBoxRate,
+                            item.taxableBoxRate.toFloat(),
                             item.numberOfBoxesOrdered,
                             item.numberOfPcsOrdered,
                             "0",
                             "0",
                             "0",
                             "0",
-                            item.taxPercentage,
+                            item.taxPercentage.toFloat(),
                             item.itemGroup,
-                            item.taxablePcsRate
+                            item.taxablePcsRate.toFloat()
                         )
                     )
                 }
@@ -262,23 +261,61 @@ class UtilityMethods {
         }
     }
 
+    fun createCustomerOrdersBackupCSV(context: Context, data: List<CustomerOrderModel>): File? {
+        val fileName = "ORD_${getCurrentDateString("dd-MM-yyyy")}.csv"
+        val file: File = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // App-specific external storage for Android 10 and above
+            File(context.getExternalFilesDir(null), fileName)
+        } else {
+            // Internal storage for devices below Android 10
+            File(context.filesDir, fileName)
+        }
+
+        try {
+            csvWriter().open(file, file.exists()) {
+                writeRow(listOf("Date", "Customer Name", "Total Value"))
+                data.forEach { item ->
+                    writeRow(item.date, item.customerName, item.orderTotal)
+                }
+            }
+
+            return file
+        } catch (ex: Exception) {
+            Log.e("File not created", "createCsvFile: $ex")
+            return null
+        }
+    }
+
 
     // Upload the CSV file to Firebase Storage
-    suspend fun uploadCsvFile(context: Context, csvFile: File): Uri? {
+    suspend fun backupItemsCSVFile(context: Context, csvFile: File, customerName: String): Uri? {
         val storageReference = FirebaseStorage.getInstance().reference
         val date = getCurrentDateString("dd-MM-yyyy")
         val salesmanName = getSalesmanName(context)
 
         return try {
-            // Create a reference to the file you want to upload
             val fileUri = Uri.fromFile(csvFile)
-            val storageRef = storageReference.child("BACKUP/${salesmanName}/$date/${csvFile.name}")
-
-            // Upload the file
+            val storageRef =
+                storageReference.child("BACKUP/${salesmanName}/${customerName}/$date/${csvFile.name}")
             val uploadTask = storageRef.putFile(fileUri).await()
-
-            // Get the download URL
             storageRef.downloadUrl.await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    suspend fun backupCustomerOrderCSV(context: Context, csvFile: File): Uri? {
+        val storageReference = FirebaseStorage.getInstance().reference
+        val date = getCurrentDateString("dd-MM-yyyy")
+        val salesmanName = getSalesmanName(context)
+
+        return try {
+            val fileUri = Uri.fromFile(csvFile)
+            val storageRef =
+                storageReference.child("BACKUP/CUSTOMER_ORDER_BACKUPS/$date/${csvFile.name}")
+            val uploadTask = storageRef.putFile(fileUri).await()
+            return storageRef.downloadUrl.await()
         } catch (e: Exception) {
             e.printStackTrace()
             null

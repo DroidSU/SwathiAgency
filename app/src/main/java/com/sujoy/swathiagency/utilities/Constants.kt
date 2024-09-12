@@ -17,9 +17,14 @@ class Constants {
         const val SHARED_PREF_SALESMAN_NAME = "salesman_name"
 
         const val TABLE_FILE_OBJECTS = "FileObjects"
+        const val TABLE_ORDERS = "CustomerOrder"
         const val IS_BACKED_UP = "isBackedUp"
         const val CREATED_ON_DATE = "createdOn"
         const val COMPANY_NAME = "companyName"
+        const val CUSTOMER_NAME = "customerName"
+        const val ORDER_TOTAL = "orderTotal"
+        const val DATE = "date"
+        const val ORDER_ID = "orderId"
 
         const val COMPANY_TYPE_ITC = "ITC"
         const val COMPANY_TYPE_AVT = "AVT"
