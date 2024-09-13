@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
@@ -13,7 +12,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.PopupMenu
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
@@ -36,20 +35,19 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedListener{
+class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedListener {
 
     private lateinit var binding: ActivityCustomerSelectionBinding
 
     private lateinit var customerRecyclerAdapter: CustomersRecyclerAdapter
     private var customerList: MutableList<CustomerModel> = mutableListOf()
     private var selectedCustomer: CustomerModel? = null
-    private var filterBy: Int = 0
     private var fileObjectModelsList: List<OrderFileModel> = listOf()
     private var companyType = Constants.COMPANY_TYPE_ITC
 
-    private var customerFilterAdapter: ArrayAdapter<String>? = null
-    private var filterStringsList: MutableList<String> = mutableListOf()
-    private var selectedCustomerFilter: String = ""
+    private var customerRouteArrayAdapter: ArrayAdapter<String>? = null
+    private var routeStringsList: MutableList<String> = mutableListOf()
+    private var selectedRouteFromList: String = ""
 
     private lateinit var lottieOverlayFragment: LottieOverlayFragment
 
@@ -83,51 +81,59 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
         customerRecyclerAdapter = CustomersRecyclerAdapter(this, customerList, this)
         binding.rvCustomers.adapter = customerRecyclerAdapter
 
-        customerFilterAdapter =
-            ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, filterStringsList)
-        binding.searchCustomersDropdown.setAdapter(customerFilterAdapter)
+        customerRouteArrayAdapter =
+            ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, routeStringsList)
+        binding.searchCustomersRouteDropdown.setAdapter(customerRouteArrayAdapter)
 
-        binding.searchCustomersDropdown.setOnClickListener {
-            binding.searchCustomersDropdown.showDropDown()
+        binding.searchCustomersRouteDropdown.setOnClickListener {
+            binding.searchCustomersRouteDropdown.showDropDown()
         }
 
-        binding.searchCustomersDropdown.setOnFocusChangeListener { view, hasFocus ->
+        binding.searchCustomersRouteDropdown.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
-                binding.searchCustomersDropdown.showDropDown()
+                binding.searchCustomersRouteDropdown.showDropDown()
             }
         }
 
-        binding.searchCustomersDropdown.setOnItemClickListener { parent, _, position, _ ->
-            UtilityMethods.hideKeyBoard(binding.searchCustomersDropdown, this)
-            selectedCustomerFilter = parent.getItemAtPosition(position).toString()
-            val filteredList: List<CustomerModel> = if (filterBy == 0) {
-                customerList.filter {
-                    it.customerName.contains(
-                        selectedCustomerFilter,
-                        ignoreCase = true
-                    )
-                }
-            } else {
-                customerList.filter {
-                    it.customerRoute.contains(
-                        selectedCustomerFilter,
-                        ignoreCase = true
-                    )
-                }
+        binding.searchCustomersRouteDropdown.setOnItemClickListener { parent, _, position, _ ->
+            UtilityMethods.hideKeyBoard(binding.searchCustomersRouteDropdown, this)
+            selectedRouteFromList = parent.getItemAtPosition(position).toString()
+            customerRecyclerAdapter.updateData(customerList.filter {
+                it.customerRoute.contains(
+                    selectedRouteFromList,
+                    ignoreCase = true
+                )
+            })
+            binding.searchView.visibility = View.VISIBLE
+            binding.searchCustomersRouteDropdown.clearFocus()
+        }
+
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
             }
 
-            customerRecyclerAdapter.updateData(filteredList)
-        }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if(newText == null){
+                    customerRecyclerAdapter.updateData(customerList)
+                }
+                else{
+                    customerRecyclerAdapter.updateData(customerList.filter { it.customerName.contains(newText, ignoreCase = true) && it.customerRoute == selectedRouteFromList })
+                }
+                return true
+            }
+        })
 
         lifecycleScope.launch {
             viewModel.csvData.collect { data ->
                 if (data.isNotEmpty()) {
                     customerList = data
                     customerList.sortBy { item -> item.customerName }
-                    filterStringsList = customerList.map { it.customerName }.distinct().toMutableList()
-                    customerFilterAdapter?.let {
+                    routeStringsList =
+                        customerList.map { it.customerRoute }.distinct().toMutableList()
+                    customerRouteArrayAdapter?.let {
                         it.clear()
-                        it.addAll(filterStringsList)
+                        it.addAll(routeStringsList)
                         it.notifyDataSetChanged()
                     }
                     customerRecyclerAdapter.updateData(customerList)
@@ -147,10 +153,6 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
             finish()
         }
 
-        binding.ivFilter.setOnClickListener {
-            showPopupMenu(it)
-        }
-
         lifecycleScope.launch {
             viewModel.fileList.collect { data ->
                 if (data.isNotEmpty()) {
@@ -160,42 +162,6 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
                 }
             }
         }
-    }
-
-    private fun showPopupMenu(view: View) {
-        val popup = PopupMenu(this, view)
-        val inflater: MenuInflater = popup.menuInflater
-        inflater.inflate(R.menu.popup_menu, popup.menu)
-        popup.setOnMenuItemClickListener { menuItem: MenuItem ->
-            when (menuItem.itemId) {
-                R.id.menu_opt_1 -> {
-                    filterBy = 0
-                    binding.searchCustomersDropdown.setHint(R.string.filter_by_customer_name)
-                    filterStringsList = customerList.map { it.customerName }.distinct().toMutableList()
-                    customerFilterAdapter?.let {
-                        it.clear()
-                        it.addAll(filterStringsList)
-                        it.notifyDataSetChanged()
-                    }
-                    true
-                }
-
-                R.id.menu_opt_2 -> {
-                    filterBy = 1
-                    binding.searchCustomersDropdown.setHint(R.string.filter_by_customer_route)
-                    filterStringsList = customerList.map { it.customerRoute }.distinct().toMutableList()
-                    customerFilterAdapter?.let {
-                        it.clear()
-                        it.addAll(filterStringsList)
-                        it.notifyDataSetChanged()
-                    }
-                    true
-                }
-
-                else -> false
-            }
-        }
-        popup.show()
     }
 
     override fun onStart() {
@@ -208,8 +174,8 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
     }
 
 
-
     override fun onCustomerClicked(customer: CustomerModel) {
+        UtilityMethods.hideKeyBoard(binding.root, this)
         selectedCustomer = customer
         binding.btnNextScreen.visibility = View.VISIBLE
     }
@@ -251,7 +217,10 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
 
                         for (fileObject in fileObjectModelsList) {
                             val file = File(fileObject.fileURI)
-                            UtilityMethods().backupItemsCSVFile(this@CustomerSelectionActivity, file, fileObject.customerName)
+                            UtilityMethods().backupItemsCSVFile(
+                                this@CustomerSelectionActivity,
+                                file
+                            )
                         }
 
                         withContext(Dispatchers.Main) {

@@ -10,4 +10,5 @@ data class CustomerOrderModel(
     val customerName : String,
     var orderTotal : Float = 0F,
     val date : String,
+    val companyName : String,
 )

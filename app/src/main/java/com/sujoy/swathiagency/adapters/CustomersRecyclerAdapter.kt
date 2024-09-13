@@ -45,8 +45,7 @@ class CustomersRecyclerAdapter(
     }
 
     override fun onBindViewHolder(holder: CustomersViewHolder, position: Int) {
-        val currentPosition = position
-
+        val currentPosition = holder.adapterPosition
         val customer = customerList[currentPosition]
 
         holder.tvCustomerName.text = customer.customerName

@@ -177,11 +177,11 @@ class UtilityMethods {
 
             val fileName: String = when (companyType) {
                 Constants.COMPANY_TYPE_ITC -> {
-                    "${customerModel.customerName[2]}_ITC_$timeStamp.csv"
+                    "ITC_${customerModel.customerName[3]}_${salesmanName}_$timeStamp.csv"
                 }
 
                 Constants.COMPANY_TYPE_AVT -> {
-                    "AVT_$timeStamp.csv"
+                    "AVT_${customerModel.customerName[3]}_${salesmanName}_$timeStamp.csv"
                 }
 
                 else -> {
@@ -262,7 +262,8 @@ class UtilityMethods {
     }
 
     fun createCustomerOrdersBackupCSV(context: Context, data: List<CustomerOrderModel>): File? {
-        val fileName = "ORD_${getCurrentDateString("dd-MM-yyyy")}.csv"
+        val salesmanName = getSalesmanName(context)
+        val fileName = "${salesmanName}_${getCurrentDateString("dd-MM-yyyy")}.csv"
         val file: File = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             // App-specific external storage for Android 10 and above
             File(context.getExternalFilesDir(null), fileName)
@@ -288,7 +289,7 @@ class UtilityMethods {
 
 
     // Upload the CSV file to Firebase Storage
-    suspend fun backupItemsCSVFile(context: Context, csvFile: File, customerName: String): Uri? {
+    suspend fun backupItemsCSVFile(context: Context, csvFile: File): Uri? {
         val storageReference = FirebaseStorage.getInstance().reference
         val date = getCurrentDateString("dd-MM-yyyy")
         val salesmanName = getSalesmanName(context)
@@ -296,7 +297,7 @@ class UtilityMethods {
         return try {
             val fileUri = Uri.fromFile(csvFile)
             val storageRef =
-                storageReference.child("BACKUP/${salesmanName}/${customerName}/$date/${csvFile.name}")
+                storageReference.child("BACKUP/${salesmanName}/$date/${csvFile.name}")
             val uploadTask = storageRef.putFile(fileUri).await()
             storageRef.downloadUrl.await()
         } catch (e: Exception) {

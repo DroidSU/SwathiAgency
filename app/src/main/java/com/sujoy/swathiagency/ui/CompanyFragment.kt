@@ -26,7 +26,9 @@ import com.sujoy.swathiagency.utilities.UtilityMethods
 import com.sujoy.swathiagency.utilities.UtilityMethods.Companion.showAlertDialog
 import com.sujoy.swathiagency.viewmodels.CompanyVMFactory
 import com.sujoy.swathiagency.viewmodels.CompanyViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -95,28 +97,23 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.itemListOfSelectedCategories.collect { value ->
-                if (binding.recyclerCategoryItems.adapter == null) {
-                    itemsRecyclerAdapter =
-                        ItemsRecyclerAdapter(
-                            value,
-                            viewModel,
-                            this@CompanyFragment,
-                            requireContext()
-                        )
-                    binding.recyclerCategoryItems.adapter = itemsRecyclerAdapter
-                } else {
-                    itemsRecyclerAdapter.updateData(value)
-                    if (!binding.recyclerCategoryItems.isComputingLayout) {
-                        itemsRecyclerAdapter.notifyDataSetChanged()
+                withContext(Dispatchers.Main) {
+                    if (binding.recyclerCategoryItems.adapter == null) {
+                        itemsRecyclerAdapter =
+                            ItemsRecyclerAdapter(
+                                value,
+                                this@CompanyFragment,
+                                requireContext()
+                            )
+                        binding.recyclerCategoryItems.adapter = itemsRecyclerAdapter
                     } else {
-                        binding.recyclerCategoryItems.post {
-                            itemsRecyclerAdapter.notifyDataSetChanged()
-                        }
+                        itemsRecyclerAdapter.updateData(value)
+                        itemsRecyclerAdapter.notifyDataSetChanged()
                     }
-                }
 
-                binding.lvCategoryItemLoading.visibility = View.GONE
-                binding.recyclerCategoryItems.visibility = View.VISIBLE
+                    binding.lvCategoryItemLoading.visibility = View.GONE
+                    binding.recyclerCategoryItems.visibility = View.VISIBLE
+                }
             }
         }
 
@@ -130,10 +127,6 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
                     },
                     { return@showAlertDialog })
             } else {
-//                showAlertDialog(requireContext(), "Do you want to create a new order?", {
-//                    completeOrder()
-//                }, {
-//                })
                 val intent = Intent(requireActivity(), OrderedItemsActivity::class.java)
                 intent.putParcelableArrayListExtra(
                     "ordered_item_list",
@@ -178,41 +171,45 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.categories.collect { data ->
-                if (data.isNotEmpty()) {
-                    categories = data
-                    try{
-                        categories =
-                            categories.sortedBy { it.substringBefore(" ").toInt() }.toMutableList()
-                    }
-                    catch (ex : Exception){
-                        Log.e("ERROR OCCURRED", "$ex")
-                    }
+                withContext(Dispatchers.Main) {
+                    if (data.isNotEmpty()) {
+                        categories = data
+                        try{
+                            categories =
+                                categories.sortedBy { it.substringBefore(" ").toInt() }.toMutableList()
+                        }
+                        catch (ex : Exception){
+                            Log.e("ERROR OCCURRED", "$ex")
+                        }
 
-                    categoriesAdapter?.let {
-                        it.clear()
-                        it.addAll(categories)
-                        it.notifyDataSetChanged()
-                    }
+                        categoriesAdapter?.let {
+                            it.clear()
+                            it.addAll(categories)
+                            it.notifyDataSetChanged()
+                        }
 
-                    viewModel.getItemsInSelectedCategory("")
-                    binding.searchCategoryDropdown.isEnabled = true
-                    binding.lvCategoryLoading.visibility = View.GONE
-                    binding.clMainLayout.visibility = View.VISIBLE
+                        viewModel.getItemsInSelectedCategory("")
+                        binding.searchCategoryDropdown.isEnabled = true
+                        binding.lvCategoryLoading.visibility = View.GONE
+                        binding.clMainLayout.visibility = View.VISIBLE
+                    }
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.totalBill.collect { value ->
-                if (value > 0F) {
-                    binding.llBillAmount.visibility = View.VISIBLE
-                    binding.llConfirmCancelOrder.visibility = View.VISIBLE
-                    binding.tvTotalAmount.text =
-                        BigDecimal(value.toString()).setScale(2, RoundingMode.HALF_UP)
-                            .toFloat().toString()
-                } else {
-                    binding.llBillAmount.visibility = View.GONE
-                    binding.llConfirmCancelOrder.visibility = View.GONE
+                withContext(Dispatchers.Main) {
+                    if (value > 0F) {
+                        binding.llBillAmount.visibility = View.VISIBLE
+                        binding.llConfirmCancelOrder.visibility = View.VISIBLE
+                        binding.tvTotalAmount.text =
+                            BigDecimal(value.toString()).setScale(2, RoundingMode.HALF_UP)
+                                .toFloat().toString()
+                    } else {
+                        binding.llBillAmount.visibility = View.GONE
+                        binding.llConfirmCancelOrder.visibility = View.GONE
+                    }
                 }
             }
         }

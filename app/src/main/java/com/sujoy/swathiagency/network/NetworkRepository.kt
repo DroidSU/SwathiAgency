@@ -154,13 +154,13 @@ class NetworkRepository(private val context: Context) {
                     itemsList.add(
                         ItemsModel(
                             itemName = item[0],
-                            availableQuantity = item[1],
-                            numberOfPcs = item[2],
-                            taxableBoxRate = item[3],
-                            taxPercentage = item[4],
-                            mrp = item[5],
-                            itemGroup = item[6],
-                            taxablePcsRate = item[13]
+                            availableQuantity = item[1].trim(),
+                            numberOfPcs = item[2].trim(),
+                            taxableBoxRate = item[3].trim(),
+                            taxPercentage = item[4].trim(),
+                            mrp = item[5].trim(),
+                            itemGroup = item[6].trim(),
+                            taxablePcsRate = item[13].trim()
                         )
                     )
                 }
@@ -201,13 +201,13 @@ class NetworkRepository(private val context: Context) {
                             itemsList.add(
                                 ItemsModel(
                                     itemName = item[0],
-                                    availableQuantity = item[1],
-                                    numberOfPcs = item[2],
-                                    taxableBoxRate = item[3],
-                                    taxPercentage = item[4],
-                                    mrp = item[5],
+                                    availableQuantity = item[1].trim(),
+                                    numberOfPcs = item[2].trim(),
+                                    taxableBoxRate = item[3].trim(),
+                                    taxPercentage = item[4].trim(),
+                                    mrp = item[5].trim(),
                                     itemGroup = item[6],
-                                    taxablePcsRate = item[13]
+                                    taxablePcsRate = item[13].trim()
                                 )
                             )
                         }

@@ -61,9 +61,9 @@ class CompanyViewModel(private val repository: NetworkRepository) : ViewModel() 
     fun getItemsInSelectedCategory(selectedCategory: String) {
         if (selectedCategory.isNotEmpty()) {
             _itemListOfSelectedCategories.value =
-                _itemData.value.filter { it.itemGroup == selectedCategory }.sortedBy { it.taxablePcsRate } .toMutableList()
+                _itemData.value.filter { it.itemGroup == selectedCategory }.sortedBy { it.taxablePcsRate.toFloat() }.toMutableList()
         } else {
-            _itemListOfSelectedCategories.value = _itemData.value.sortedBy { it.taxablePcsRate } .toMutableList()
+            _itemListOfSelectedCategories.value = _itemData.value.sortedBy { it.taxablePcsRate.toFloat() }.toMutableList()
         }
     }
 

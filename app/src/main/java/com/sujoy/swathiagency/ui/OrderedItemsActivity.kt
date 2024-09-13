@@ -206,7 +206,8 @@ class OrderedItemsActivity : AppCompatActivity() {
                 orderId = orderId,
                 customerName = customerModel.customerName,
                 orderTotal = totalBillAmount,
-                date = UtilityMethods.getCurrentDateString("dd-MM-yyyy")
+                date = UtilityMethods.getCurrentDateString("dd-MM-yyyy"),
+                companyName = companyType
             )
             viewModel.createCompanyOrderObject(companyOrderModel)
         } else {

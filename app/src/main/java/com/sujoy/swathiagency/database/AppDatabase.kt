@@ -10,7 +10,7 @@ import com.sujoy.swathiagency.data.dbModels.CustomerOrderModel
 import com.sujoy.swathiagency.data.dbModels.OrderFileModel
 import com.sujoy.swathiagency.utilities.Constants
 
-@Database(entities = [OrderFileModel::class, CustomerOrderModel::class], version = 2, exportSchema = false)
+@Database(entities = [OrderFileModel::class, CustomerOrderModel::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun orderDao(): OrderDao
@@ -27,6 +27,7 @@ abstract class AppDatabase : RoomDatabase() {
                     "swathi_agency_database"
                 )
                     .addMigrations(MIGRATION_1_2) // Add your migrations here
+                    .addMigrations(MIGRATION_2_3)
                     .build()
                 INSTANCE = instance
                 instance
@@ -38,6 +39,13 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 // Perform your migration here
                 database.execSQL("ALTER TABLE ${Constants.TABLE_FILE_OBJECTS} ADD COLUMN ${Constants.COMPANY_NAME} TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Perform your migration here
+                database.execSQL("ALTER TABLE ${Constants.TABLE_ORDERS} ADD COLUMN ${Constants.COMPANY_NAME} TEXT NOT NULL DEFAULT ''")
             }
         }
     }
