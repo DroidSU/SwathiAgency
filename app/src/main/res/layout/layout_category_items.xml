@@ -17,7 +17,7 @@
         android:layout_marginTop="5dp"
         android:hint="@string/dummy_text"
         android:padding="2dp"
-        android:textColor="@android:color/holo_red_light"
+        android:textColor="@color/black"
         android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@id/tv_available_text"
         app:layout_constraintStart_toStartOf="parent"

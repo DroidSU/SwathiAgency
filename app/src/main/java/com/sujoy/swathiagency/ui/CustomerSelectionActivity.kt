@@ -84,6 +84,7 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
         customerRouteArrayAdapter =
             ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, routeStringsList)
         binding.searchCustomersRouteDropdown.setAdapter(customerRouteArrayAdapter)
+        selectedRouteFromList = UtilityMethods.getSelectedRoute(this)
 
         binding.searchCustomersRouteDropdown.setOnClickListener {
             binding.searchCustomersRouteDropdown.showDropDown()
@@ -96,16 +97,19 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
         }
 
         binding.searchCustomersRouteDropdown.setOnItemClickListener { parent, _, position, _ ->
-            UtilityMethods.hideKeyBoard(binding.searchCustomersRouteDropdown, this)
-            selectedRouteFromList = parent.getItemAtPosition(position).toString()
-            customerRecyclerAdapter.updateData(customerList.filter {
-                it.customerRoute.contains(
-                    selectedRouteFromList,
-                    ignoreCase = true
-                )
-            })
-            binding.searchView.visibility = View.VISIBLE
-            binding.searchCustomersRouteDropdown.clearFocus()
+            if(selectedRouteFromList.isNotEmpty()){
+                UtilityMethods.hideKeyBoard(binding.searchCustomersRouteDropdown, this)
+                selectedRouteFromList = parent.getItemAtPosition(position).toString()
+                UtilityMethods.setSelectedRoute(this, selectedRouteFromList)
+                customerRecyclerAdapter.updateData(customerList.filter {
+                    it.customerRoute.contains(
+                        selectedRouteFromList,
+                        ignoreCase = true
+                    )
+                })
+                binding.searchView.visibility = View.VISIBLE
+                binding.searchCustomersRouteDropdown.clearFocus()
+            }
         }
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -136,7 +140,21 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
                         it.addAll(routeStringsList)
                         it.notifyDataSetChanged()
                     }
-                    customerRecyclerAdapter.updateData(customerList)
+
+                    if(selectedRouteFromList.isNotEmpty()){
+                        binding.searchCustomersRouteDropdown.setText(selectedRouteFromList, false)
+                        customerRecyclerAdapter.updateData(customerList.filter {
+                            it.customerRoute.contains(
+                                selectedRouteFromList,
+                                ignoreCase = true
+                            )
+                        })
+                    }
+                    else{
+                        customerRecyclerAdapter.updateData(customerList)
+                    }
+
+                    binding.searchView.visibility = View.VISIBLE
                     binding.llLoadingView.visibility = View.GONE
                     binding.rvCustomers.visibility = View.VISIBLE
                 }

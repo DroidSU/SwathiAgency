@@ -70,8 +70,10 @@ class ItemsRecyclerAdapter(
         holder.textViewAvailable.text = currentItem.availableQuantity
         holder.textViewMRP.text = currentItem.mrp
 
-        if (currentItem.availableQuantity.toFloatOrNull() == null || currentItem.availableQuantity.toFloat() < 0F)
+        if (currentItem.availableQuantity.toFloatOrNull() == null || currentItem.availableQuantity.toFloat() < 0F){
             holder.textViewAvailable.setTextColor(context.getColor(android.R.color.holo_red_light))
+            holder.tvItemName.setTextColor(context.getColor(R.color.black))
+        }
 
         if (currentItem.selected) {
             holder.boxCountContainer.visibility = View.VISIBLE

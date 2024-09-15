@@ -15,6 +15,7 @@ class Constants {
         const val SHARED_PREF_BILL_NUMBER_AVT = "bill_number_avt"
         const val SHARED_PREF_BILL_ID_AVT = "bill_id_avt"
         const val SHARED_PREF_SALESMAN_NAME = "salesman_name"
+        const val SHARED_PREF_SELECTED_ROUTE = "selected_route"
 
         const val TABLE_FILE_OBJECTS = "FileObjects"
         const val TABLE_ORDERS = "CustomerOrder"

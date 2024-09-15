@@ -124,6 +124,19 @@ class UtilityMethods {
                 .toString()
         }
 
+        fun setSelectedRoute(context: Context, selectedRoute: String) {
+            val sharedPref =
+                context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
+            val editor = sharedPref.edit()
+            editor.putString(Constants.SHARED_PREF_SELECTED_ROUTE, selectedRoute)
+            editor.apply()
+        }
+
+        fun getSelectedRoute(context: Context): String {
+            return context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
+                .getString(Constants.SHARED_PREF_SELECTED_ROUTE, "").toString()
+        }
+
         fun Int.dpToPx(context: Context): Int {
             return (this * context.resources.displayMetrics.density).toInt()
         }
@@ -198,33 +211,6 @@ class UtilityMethods {
             }
 
             csvWriter().open(file, true) {
-
-                // Write the header
-//                if (!fileExists) {
-//                    writeRow(
-//                        listOf(
-//                            "Invoice Number",
-//                            "Cash Sales",
-//                            "Sales Account",
-//                            "Company Name",
-//                            "Salesman",
-//                            "Route",
-//                            "Date",
-//                            "Customer Name",
-//                            "Item Name",
-//                            "Box Price",
-//                            "Box",
-//                            "Pcs",
-//                            "default",
-//                            "default",
-//                            "default",
-//                            "default",
-//                            "Tax Rate",
-//                            "Category",
-//                            "Pcs Rate"
-//                        )
-//                    )
-//                }
 
                 // Write each object as a row in the CSV
                 data.forEach { item ->
