@@ -81,7 +81,7 @@ class CompanyViewModel(private val repository: NetworkRepository) : ViewModel() 
     }
 
     fun addOrderItem(currentItem : ItemsModel){
-        _orderedItemsList.value.removeIf { it.itemName == currentItem.itemName && (currentItem.numberOfBoxesOrdered > 0 || currentItem.numberOfPcsOrdered > 0) }
+        _orderedItemsList.value.removeIf { it.itemName == currentItem.itemName && (currentItem.numberOfBoxesOrdered >= 0 || currentItem.numberOfPcsOrdered >= 0) }
 
         if (currentItem.numberOfBoxesOrdered > 0 || currentItem.numberOfPcsOrdered > 0) {
             _orderedItemsList.value.add(currentItem)

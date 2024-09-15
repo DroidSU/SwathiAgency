@@ -69,6 +69,7 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
     private var billDialog: BillNumberDialog? = null
     private var salesmanName: String = ""
     private var billId: String = ""
+    private var totalBillValue = 0F
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -118,12 +119,12 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
         }
 
         binding.btnCompleteOrder.setOnClickListener {
-            if (viewModel.orderedItemsList.value.isEmpty()) {
+            if (totalBillValue <= 0F) {
                 showAlertDialog(
                     requireContext(),
-                    "You need to add value for ordered item",
+                    "Please add items to order",
                     {
-
+                        return@showAlertDialog
                     },
                     { return@showAlertDialog })
             } else {
@@ -174,11 +175,11 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
                 withContext(Dispatchers.Main) {
                     if (data.isNotEmpty()) {
                         categories = data
-                        try{
+                        try {
                             categories =
-                                categories.sortedBy { it.substringBefore(" ").toInt() }.toMutableList()
-                        }
-                        catch (ex : Exception){
+                                categories.sortedBy { it.substringBefore(" ").toInt() }
+                                    .toMutableList()
+                        } catch (ex: Exception) {
                             Log.e("ERROR OCCURRED", "$ex")
                         }
 
@@ -200,30 +201,26 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.totalBill.collect { value ->
                 withContext(Dispatchers.Main) {
-                    if (value > 0F) {
-                        binding.llBillAmount.visibility = View.VISIBLE
-                        binding.llConfirmCancelOrder.visibility = View.VISIBLE
-                        binding.tvTotalAmount.text =
-                            BigDecimal(value.toString()).setScale(2, RoundingMode.HALF_UP)
-                                .toFloat().toString()
-                    } else {
-                        binding.llBillAmount.visibility = View.GONE
-                        binding.llConfirmCancelOrder.visibility = View.GONE
-                    }
+                    totalBillValue = BigDecimal(value.toString()).setScale(2, RoundingMode.HALF_UP)
+                        .toFloat()
+                    binding.tvTotalAmount.text = totalBillValue.toString()
+
+//                    if (totalBillValue > 0F) {
+//                        binding.llBillAmount.visibility = View.VISIBLE
+//                        binding.llConfirmCancelOrder.visibility = View.VISIBLE
+//                    } else {
+//                        binding.llBillAmount.visibility = View.GONE
+//                        binding.llConfirmCancelOrder.visibility = View.GONE
+//                    }
+
+                    binding.llBillAmount.visibility = View.VISIBLE
+                    binding.llConfirmCancelOrder.visibility = View.VISIBLE
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.orderedItemsList.collect { value ->
-//                if(value.isNotEmpty()){
-//                    binding.llBillAmount.visibility = View.VISIBLE
-//                    binding.llConfirmCancelOrder.visibility = View.VISIBLE
-//                }
-//                else{
-//                    binding.llBillAmount.visibility = View.GONE
-//                    binding.llConfirmCancelOrder.visibility = View.GONE
-//                }
             }
         }
 
@@ -249,9 +246,17 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
 
     private fun fetchItemList() {
         if (companyType == Constants.COMPANY_TYPE_ITC) {
-            viewModel.fetchItemData(requireContext(),"https://drive.google.com/uc?export=download&id=${Constants.ITC_ITEM_FILE_DRIVE_ID}", companyType)
+            viewModel.fetchItemData(
+                requireContext(),
+                "https://drive.google.com/uc?export=download&id=${Constants.ITC_ITEM_FILE_DRIVE_ID}",
+                companyType
+            )
         } else {
-            viewModel.fetchItemData(requireContext(),"https://drive.google.com/uc?export=download&id=${Constants.AVT_ITEM_FILE_DRIVE_ID}", companyType)
+            viewModel.fetchItemData(
+                requireContext(),
+                "https://drive.google.com/uc?export=download&id=${Constants.AVT_ITEM_FILE_DRIVE_ID}",
+                companyType
+            )
         }
     }
 

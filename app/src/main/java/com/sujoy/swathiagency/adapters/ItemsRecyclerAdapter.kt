@@ -107,7 +107,6 @@ class ItemsRecyclerAdapter(
                     currentItem.numberOfBoxesOrdered = 0
                 }
 
-                onItemEvent.onItemValueChanged(currentItem)
                 updateTotalValue(holder, currentItem)
             }
 
@@ -125,7 +124,6 @@ class ItemsRecyclerAdapter(
                     currentItem.numberOfPcsOrdered = 0
                 }
 
-                onItemEvent.onItemValueChanged(currentItem)
                 updateTotalValue(holder, currentItem)
             }
 
@@ -170,7 +168,6 @@ class ItemsRecyclerAdapter(
             }
         }
 
-        onItemEvent.onItemValueChanged(currentItem)
         updateTotalValue(holder, currentItem)
     }
 
@@ -186,6 +183,8 @@ class ItemsRecyclerAdapter(
             holder.totalAmountContainer.visibility = View.VISIBLE
         else
             holder.totalAmountContainer.visibility = View.GONE
+
+        onItemEvent.onItemValueChanged(currentItem)
     }
 
 
