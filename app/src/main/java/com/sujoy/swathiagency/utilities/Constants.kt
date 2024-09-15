@@ -26,6 +26,7 @@ class Constants {
         const val ORDER_TOTAL = "orderTotal"
         const val DATE = "date"
         const val ORDER_ID = "orderId"
+        const val FILE_NAME = "fileName"
 
         const val COMPANY_TYPE_ITC = "ITC"
         const val COMPANY_TYPE_AVT = "AVT"

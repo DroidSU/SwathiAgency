@@ -38,9 +38,9 @@ class CustomerSelectionViewModel(private val repository: NetworkRepository, priv
         }
     }
 
-    fun markFilesAsBackedUp(companyType: String) {
+    fun markFilesAsBackedUp(fileName: String, companyType: String) {
         viewModelScope.launch {
-            databaseRepository.markAsBackedUp(companyType)
+            databaseRepository.markAsBackedUp(fileName, companyType)
         }
     }
 }

@@ -16,8 +16,8 @@ class FileObjectModelRepository(private val orderDao: OrderDao) {
         return orderDao.getFilesNotBackedUp(companyType)
     }
 
-    suspend fun markAsBackedUp(companyType: String) {
-        return orderDao.setIsBackedUp(companyType)
+    suspend fun markAsBackedUp(fileName: String, companyType: String) {
+        return orderDao.setIsBackedUp(fileName, companyType)
     }
 
     suspend fun getCustomerOrderObjects(orderId : String) : CustomerOrderModel? {

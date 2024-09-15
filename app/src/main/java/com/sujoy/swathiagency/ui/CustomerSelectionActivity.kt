@@ -97,19 +97,18 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
         }
 
         binding.searchCustomersRouteDropdown.setOnItemClickListener { parent, _, position, _ ->
-            if(selectedRouteFromList.isNotEmpty()){
-                UtilityMethods.hideKeyBoard(binding.searchCustomersRouteDropdown, this)
-                selectedRouteFromList = parent.getItemAtPosition(position).toString()
-                UtilityMethods.setSelectedRoute(this, selectedRouteFromList)
-                customerRecyclerAdapter.updateData(customerList.filter {
-                    it.customerRoute.contains(
-                        selectedRouteFromList,
-                        ignoreCase = true
-                    )
-                })
-                binding.searchView.visibility = View.VISIBLE
-                binding.searchCustomersRouteDropdown.clearFocus()
-            }
+            UtilityMethods.hideKeyBoard(binding.searchCustomersRouteDropdown, this)
+            selectedRouteFromList = parent.getItemAtPosition(position).toString()
+
+            UtilityMethods.setSelectedRoute(this, selectedRouteFromList)
+            customerRecyclerAdapter.updateData(customerList.filter {
+                it.customerRoute.contains(
+                    selectedRouteFromList,
+                    ignoreCase = true
+                )
+            })
+            binding.searchView.visibility = View.VISIBLE
+            binding.searchCustomersRouteDropdown.clearFocus()
         }
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -178,6 +177,11 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
 
                     uploadBackupFiles()
                 }
+//                else{
+//                    withContext(Dispatchers.Main) {
+//                        Toast.makeText(this@CustomerSelectionActivity, "No files to back up", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
             }
         }
     }
@@ -239,6 +243,7 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
                                 this@CustomerSelectionActivity,
                                 file
                             )
+//                            viewModel.markFilesAsBackedUp(fileObject.fileName, fileObject.companyName)
                         }
 
                         withContext(Dispatchers.Main) {
@@ -248,8 +253,6 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
                                 "Order backed up successfully",
                                 Toast.LENGTH_SHORT
                             ).show()
-
-//                            viewModel.markFilesAsBackedUp(companyType)
                         }
                     }
                 }

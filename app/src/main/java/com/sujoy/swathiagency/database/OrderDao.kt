@@ -16,11 +16,11 @@ interface OrderDao {
     @Query("SELECT * FROM ${Constants.TABLE_FILE_OBJECTS} where ${Constants.IS_BACKED_UP} = 0 AND ${Constants.COMPANY_NAME} = :companyType")
     suspend fun getFilesNotBackedUp(companyType: String) : List<OrderFileModel>
 
+    @Query("UPDATE ${Constants.TABLE_FILE_OBJECTS} SET ${Constants.IS_BACKED_UP} = 1 where ${Constants.FILE_NAME} = :fileName AND ${Constants.COMPANY_NAME} = :companyType")
+    suspend fun setIsBackedUp(fileName : String, companyType: String)
+
     @Query("SELECT EXISTS(SELECT 1 FROM ${Constants.TABLE_FILE_OBJECTS} WHERE ${Constants.CREATED_ON_DATE} = :dateString AND ${Constants.COMPANY_NAME} = :companyType)")
     suspend fun isDatePresent(dateString : String, companyType : String) : Int
-
-    @Query("UPDATE ${Constants.TABLE_FILE_OBJECTS} SET ${Constants.IS_BACKED_UP} = 1 where ${Constants.COMPANY_NAME} = :companyName")
-    suspend fun setIsBackedUp(companyName: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun createCustomerOrderObject(companyOrderModel: CustomerOrderModel)

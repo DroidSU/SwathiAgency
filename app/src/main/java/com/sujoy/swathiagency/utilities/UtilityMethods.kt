@@ -190,11 +190,11 @@ class UtilityMethods {
 
             val fileName: String = when (companyType) {
                 Constants.COMPANY_TYPE_ITC -> {
-                    "ITC_${customerModel.customerName[3]}_${salesmanName}_$timeStamp.csv"
+                    "ITC_${customerModel.customerName.substring(0, 3)}_${salesmanName}_$timeStamp.csv"
                 }
 
                 Constants.COMPANY_TYPE_AVT -> {
-                    "AVT_${customerModel.customerName[3]}_${salesmanName}_$timeStamp.csv"
+                    "AVT_${customerModel.customerName.substring(0, 3)}_${salesmanName}_$timeStamp.csv"
                 }
 
                 else -> {
