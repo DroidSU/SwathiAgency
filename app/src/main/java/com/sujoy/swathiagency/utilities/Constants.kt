@@ -19,6 +19,8 @@ class Constants {
 
         const val TABLE_FILE_OBJECTS = "FileObjects"
         const val TABLE_ORDERS = "CustomerOrder"
+        const val TABLE_CUSTOMERS = "Customers"
+        const val TABLE_ITEMS = "Items"
         const val IS_BACKED_UP = "isBackedUp"
         const val CREATED_ON_DATE = "createdOn"
         const val COMPANY_NAME = "companyName"
@@ -27,6 +29,9 @@ class Constants {
         const val DATE = "date"
         const val ORDER_ID = "orderId"
         const val FILE_NAME = "fileName"
+        const val CUSTOMER_ID = "customerId"
+        const val CUSTOMER_ROUTE = "customerRoute"
+        const val CUSTOMER_AMOUNT = "customerAmount"
 
         const val COMPANY_TYPE_ITC = "ITC"
         const val COMPANY_TYPE_AVT = "AVT"

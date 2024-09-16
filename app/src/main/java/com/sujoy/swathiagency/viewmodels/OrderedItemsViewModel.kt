@@ -2,12 +2,12 @@ package com.sujoy.swathiagency.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sujoy.swathiagency.data.dbModels.CustomerOrderModel
-import com.sujoy.swathiagency.data.dbModels.OrderFileModel
+import com.sujoy.swathiagency.data.datamodels.CustomerOrderModel
+import com.sujoy.swathiagency.data.datamodels.OrderFileModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class OrderedItemsViewModel(private val fileObjectsRepository: FileObjectModelRepository) :
+class OrderedItemsViewModel(private val fileObjectsRepository: DatabaseRepository) :
     ViewModel() {
 
     fun createOrderFileInDB(fileObjectModels: OrderFileModel) {

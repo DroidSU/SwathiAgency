@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujoy.swathiagency.R
 import com.sujoy.swathiagency.adapters.CustomersRecyclerAdapter
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
-import com.sujoy.swathiagency.data.dbModels.OrderFileModel
+import com.sujoy.swathiagency.data.datamodels.OrderFileModel
 import com.sujoy.swathiagency.database.AppDatabase
 import com.sujoy.swathiagency.databinding.ActivityCustomerSelectionBinding
 import com.sujoy.swathiagency.interfaces.OnRecyclerItemClickedListener
@@ -29,7 +29,7 @@ import com.sujoy.swathiagency.utilities.Constants
 import com.sujoy.swathiagency.utilities.UtilityMethods
 import com.sujoy.swathiagency.viewmodels.CsvViewModelFactory
 import com.sujoy.swathiagency.viewmodels.CustomerSelectionViewModel
-import com.sujoy.swathiagency.viewmodels.FileObjectModelRepository
+import com.sujoy.swathiagency.viewmodels.DatabaseRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -55,7 +55,7 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
     private val viewModel: CustomerSelectionViewModel by viewModels {
         CsvViewModelFactory(
             NetworkRepository(this),
-            FileObjectModelRepository(AppDatabase.getDatabase(this).orderDao())
+            DatabaseRepository(AppDatabase.getDatabase(this).orderDao())
         )
     }
 
@@ -177,11 +177,11 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
 
                     uploadBackupFiles()
                 }
-//                else{
-//                    withContext(Dispatchers.Main) {
-//                        Toast.makeText(this@CustomerSelectionActivity, "No files to back up", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
+                else{
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@CustomerSelectionActivity, "No files to back up", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
@@ -243,7 +243,7 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
                                 this@CustomerSelectionActivity,
                                 file
                             )
-//                            viewModel.markFilesAsBackedUp(fileObject.fileName, fileObject.companyName)
+                            viewModel.markFilesAsBackedUp(fileObject.orderId)
                         }
 
                         withContext(Dispatchers.Main) {

@@ -18,15 +18,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujoy.swathiagency.R
 import com.sujoy.swathiagency.adapters.OrderedItemsRecyclerAdapter
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
+import com.sujoy.swathiagency.data.datamodels.CustomerOrderModel
 import com.sujoy.swathiagency.data.datamodels.ItemsModel
-import com.sujoy.swathiagency.data.dbModels.CustomerOrderModel
-import com.sujoy.swathiagency.data.dbModels.OrderFileModel
+import com.sujoy.swathiagency.data.datamodels.OrderFileModel
 import com.sujoy.swathiagency.database.AppDatabase
 import com.sujoy.swathiagency.databinding.ActivityOrderedItemsBinding
 import com.sujoy.swathiagency.utilities.Constants
 import com.sujoy.swathiagency.utilities.UtilityMethods
 import com.sujoy.swathiagency.utilities.UtilityMethods.Companion.showAlertDialog
-import com.sujoy.swathiagency.viewmodels.FileObjectModelRepository
+import com.sujoy.swathiagency.viewmodels.DatabaseRepository
 import com.sujoy.swathiagency.viewmodels.OrderedItemsVMFactory
 import com.sujoy.swathiagency.viewmodels.OrderedItemsViewModel
 import java.io.File
@@ -65,7 +65,7 @@ class OrderedItemsActivity : AppCompatActivity() {
     private lateinit var lottieOverlayFragment: LottieOverlayFragment
 
     private val viewModel: OrderedItemsViewModel by viewModels {
-        OrderedItemsVMFactory(FileObjectModelRepository(AppDatabase.getDatabase(this).orderDao()))
+        OrderedItemsVMFactory(DatabaseRepository(AppDatabase.getDatabase(this).orderDao()))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -188,7 +188,7 @@ class OrderedItemsActivity : AppCompatActivity() {
     }
 
     private fun saveOrderInDB(csvFile: File) {
-        orderId = "${customerModel.customerName}_${UtilityMethods.getCurrentDateString("ddMMyyyy")}"
+        orderId = "${customerModel.customerName}_${companyType}_${UtilityMethods.getCurrentDateString("ddMMyyyy")}"
 
         val orderFileDBObject = OrderFileModel(
             fileName = csvFile.nameWithoutExtension,
@@ -196,7 +196,8 @@ class OrderedItemsActivity : AppCompatActivity() {
             createdOn = UtilityMethods.getCurrentDateString("dd-MM-yyyy"),
             fileURI = csvFile.absolutePath,
             companyName = companyType,
-            customerName = customerModel.customerName
+            customerName = customerModel.customerName,
+            orderId = orderId
         )
 
         viewModel.createOrderFileInDB(orderFileDBObject)

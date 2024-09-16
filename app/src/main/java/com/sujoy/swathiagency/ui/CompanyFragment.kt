@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujoy.swathiagency.adapters.ItemsRecyclerAdapter
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
 import com.sujoy.swathiagency.data.datamodels.ItemsModel
+import com.sujoy.swathiagency.database.AppDatabase
 import com.sujoy.swathiagency.databinding.FragmentItcBinding
 import com.sujoy.swathiagency.interfaces.OnItemEvent
 import com.sujoy.swathiagency.interfaces.OnSubmitButtonTapped
@@ -26,6 +27,7 @@ import com.sujoy.swathiagency.utilities.UtilityMethods
 import com.sujoy.swathiagency.utilities.UtilityMethods.Companion.showAlertDialog
 import com.sujoy.swathiagency.viewmodels.CompanyVMFactory
 import com.sujoy.swathiagency.viewmodels.CompanyViewModel
+import com.sujoy.swathiagency.viewmodels.DatabaseRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -50,7 +52,10 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
     }
 
     private val viewModel: CompanyViewModel by viewModels {
-        CompanyVMFactory(NetworkRepository(requireContext()))
+        CompanyVMFactory(
+            NetworkRepository(requireContext()),
+            DatabaseRepository(AppDatabase.getDatabase(requireContext()).orderDao())
+        )
     }
 
     private lateinit var binding: FragmentItcBinding

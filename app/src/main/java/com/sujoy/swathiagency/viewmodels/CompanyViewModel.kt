@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CompanyViewModel(private val repository: NetworkRepository) : ViewModel() {
+class CompanyViewModel(private val repository: NetworkRepository, private val databaseRepository: DatabaseRepository) : ViewModel() {
     private val _itemData = MutableStateFlow<ArrayList<ItemsModel>>(arrayListOf())
     val itemData: StateFlow<ArrayList<ItemsModel>> = _itemData
     private val _categories = MutableStateFlow<MutableList<String>>(arrayListOf())
@@ -36,15 +36,15 @@ class CompanyViewModel(private val repository: NetworkRepository) : ViewModel() 
     fun fetchItemData(context : Context, fileUrl: String, companyType : String) {
         viewModelScope.launch(Dispatchers.IO) {
             if(UtilityMethods.isNetworkAvailable(context)){
-                val data = repository.downloadItemsCSV(companyType)
-
+                val data = repository.getItemsCSV(companyType)
+                databaseRepository.addItems(data.toList())
                 withContext(Dispatchers.Main) {
                     _itemData.value = data
                     getAllCategories()
                 }
             }
             else{
-                val data = repository.getLocalItemsCSV(companyType)
+                val data = databaseRepository.getAllItemsFromCompany(companyType)
                 withContext(Dispatchers.Main) {
                     _itemData.value = data
                     getAllCategories()

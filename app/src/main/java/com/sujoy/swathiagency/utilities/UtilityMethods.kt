@@ -12,8 +12,8 @@ import androidx.appcompat.app.AlertDialog
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import com.google.firebase.storage.FirebaseStorage
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
+import com.sujoy.swathiagency.data.datamodels.CustomerOrderModel
 import com.sujoy.swathiagency.data.datamodels.ItemsModel
-import com.sujoy.swathiagency.data.dbModels.CustomerOrderModel
 import kotlinx.coroutines.tasks.await
 import java.io.File
 import java.text.SimpleDateFormat
@@ -181,7 +181,7 @@ class UtilityMethods {
         companyType: String
     ): File? {
         try {
-            val timeStamp = SimpleDateFormat("ddMMyyyy", Locale.getDefault()).format(Date())
+            val timeStamp = SimpleDateFormat("ddMMyyyy_HHmmss", Locale.getDefault()).format(Date())
             val date = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())
 
             val billNumber = getBillNumber(context, companyType)

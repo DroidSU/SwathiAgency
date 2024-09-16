@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sujoy.swathiagency.data.dbModels.CustomerOrderModel
+import com.sujoy.swathiagency.data.datamodels.CustomerOrderModel
 import com.sujoy.swathiagency.utilities.UtilityMethods
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ViewOrderViewModel(private val repository: FileObjectModelRepository) : ViewModel() {
+class ViewOrderViewModel(private val repository: DatabaseRepository) : ViewModel() {
 
     private val _customerOrdersList = MutableStateFlow<MutableList<CustomerOrderModel>>(
         mutableListOf()

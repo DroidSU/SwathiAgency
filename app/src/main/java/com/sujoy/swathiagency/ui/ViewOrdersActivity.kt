@@ -13,11 +13,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujoy.swathiagency.R
 import com.sujoy.swathiagency.adapters.CustomerOrderRecyclerAdapter
-import com.sujoy.swathiagency.data.dbModels.CustomerOrderModel
+import com.sujoy.swathiagency.data.datamodels.CustomerOrderModel
 import com.sujoy.swathiagency.database.AppDatabase
 import com.sujoy.swathiagency.databinding.ActivityViewOrdersBinding
 import com.sujoy.swathiagency.utilities.UtilityMethods
-import com.sujoy.swathiagency.viewmodels.FileObjectModelRepository
+import com.sujoy.swathiagency.viewmodels.DatabaseRepository
 import com.sujoy.swathiagency.viewmodels.ViewOrderVMFactory
 import com.sujoy.swathiagency.viewmodels.ViewOrderViewModel
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +34,7 @@ class ViewOrdersActivity : AppCompatActivity() {
     private lateinit var lottieOverlayFragment: LottieOverlayFragment
 
     private val viewModel: ViewOrderViewModel by viewModels {
-        ViewOrderVMFactory(FileObjectModelRepository(AppDatabase.getDatabase(this).orderDao()))
+        ViewOrderVMFactory(DatabaseRepository(AppDatabase.getDatabase(this).orderDao()))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

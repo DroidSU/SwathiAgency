@@ -1,4 +1,4 @@
-package com.sujoy.swathiagency.data.dbModels
+package com.sujoy.swathiagency.data.datamodels
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -13,4 +13,5 @@ data class OrderFileModel(
     val fileURI : String,
     val companyName : String,
     val customerName : String,
+    val orderId : String,
 )

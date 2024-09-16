@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sujoy.swathiagency.R
-import com.sujoy.swathiagency.data.dbModels.CustomerOrderModel
+import com.sujoy.swathiagency.data.datamodels.CustomerOrderModel
 import java.math.BigDecimal
 import java.math.RoundingMode
 

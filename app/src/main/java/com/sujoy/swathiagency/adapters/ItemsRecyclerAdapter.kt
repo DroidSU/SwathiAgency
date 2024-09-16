@@ -72,6 +72,10 @@ class ItemsRecyclerAdapter(
 
         if (currentItem.availableQuantity.toFloatOrNull() == null || currentItem.availableQuantity.toFloat() < 0F){
             holder.textViewAvailable.setTextColor(context.getColor(android.R.color.holo_red_light))
+            holder.tvItemName.setTextColor(context.getColor(android.R.color.holo_red_light))
+        }
+        else{
+            holder.textViewAvailable.setTextColor(context.getColor(R.color.black))
             holder.tvItemName.setTextColor(context.getColor(R.color.black))
         }
 

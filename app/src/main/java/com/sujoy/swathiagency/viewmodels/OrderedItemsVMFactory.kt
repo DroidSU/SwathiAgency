@@ -3,7 +3,7 @@ package com.sujoy.swathiagency.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
-class OrderedItemsVMFactory(private val repository: FileObjectModelRepository) : ViewModelProvider.Factory {
+class OrderedItemsVMFactory(private val repository: DatabaseRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(OrderedItemsViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
