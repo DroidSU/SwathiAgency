@@ -18,7 +18,7 @@ class Constants {
         const val SHARED_PREF_SELECTED_ROUTE = "selected_route"
 
         const val TABLE_FILE_OBJECTS = "FileObjects"
-        const val TABLE_ORDERS = "CustomerOrder"
+        const val TABLE_ORDERS = "Orders"
         const val TABLE_CUSTOMERS = "Customers"
         const val TABLE_ITEMS = "Items"
         const val IS_BACKED_UP = "isBackedUp"
@@ -26,12 +26,13 @@ class Constants {
         const val COMPANY_NAME = "companyName"
         const val CUSTOMER_NAME = "customerName"
         const val ORDER_TOTAL = "orderTotal"
-        const val DATE = "date"
+        const val DATE = "createdDate"
         const val ORDER_ID = "orderId"
         const val FILE_NAME = "fileName"
         const val CUSTOMER_ID = "customerId"
         const val CUSTOMER_ROUTE = "customerRoute"
         const val CUSTOMER_AMOUNT = "customerAmount"
+        const val ITEM_ID = "itemID"
 
         const val COMPANY_TYPE_ITC = "ITC"
         const val COMPANY_TYPE_AVT = "AVT"

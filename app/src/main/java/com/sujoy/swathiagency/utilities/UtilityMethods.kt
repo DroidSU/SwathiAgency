@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.FileProvider
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import com.google.firebase.storage.FirebaseStorage
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
@@ -178,10 +179,10 @@ class UtilityMethods {
         context: Context,
         data: List<ItemsModel>,
         customerModel: CustomerModel,
-        companyType: String
+        companyType: String,
+        timestamp: String
     ): File? {
         try {
-            val timeStamp = SimpleDateFormat("ddMMyyyy_HHmmss", Locale.getDefault()).format(Date())
             val date = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())
 
             val billNumber = getBillNumber(context, companyType)
@@ -190,15 +191,15 @@ class UtilityMethods {
 
             val fileName: String = when (companyType) {
                 Constants.COMPANY_TYPE_ITC -> {
-                    "ITC_${customerModel.customerName.substring(0, 3)}_${salesmanName}_$timeStamp.csv"
+                    "ITC_${salesmanName}_${getCurrentDateString("ddMMyyyy")}.csv"
                 }
 
                 Constants.COMPANY_TYPE_AVT -> {
-                    "AVT_${customerModel.customerName.substring(0, 3)}_${salesmanName}_$timeStamp.csv"
+                    "AVT_${salesmanName}_${getCurrentDateString("ddMMyyyy")}.csv"
                 }
 
                 else -> {
-                    "OTHERS_$timeStamp.csv"
+                    "OTHERS_${getCurrentDateString("ddMMyyyy")}.csv"
                 }
             }
 
@@ -240,6 +241,7 @@ class UtilityMethods {
                 }
             }
 
+            Log.d("File created", "File URI : ${UtilityMethods().getFileUri(context, file)}")
             return file
         } catch (ex: Exception) {
             Log.e("File not created", "createCsvFile: $ex")
@@ -247,9 +249,9 @@ class UtilityMethods {
         }
     }
 
-    fun createCustomerOrdersBackupCSV(context: Context, data: List<CustomerOrderModel>): File? {
+    fun createCustomerOrdersBackupCSV(context: Context, data: List<CustomerOrderModel>, companyType: String, totalValue : Long): File? {
         val salesmanName = getSalesmanName(context)
-        val fileName = "${salesmanName}_${getCurrentDateString("dd-MM-yyyy")}.csv"
+        val fileName = "${companyType}_${salesmanName}_${totalValue}.csv"
         val file: File = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             // App-specific external storage for Android 10 and above
             File(context.getExternalFilesDir(null), fileName)
@@ -266,6 +268,7 @@ class UtilityMethods {
                 }
             }
 
+            Log.d("Orders Total CSV created", "File created in ${getFileUri(context, file)}")
             return file
         } catch (ex: Exception) {
             Log.e("File not created", "createCsvFile: $ex")
@@ -275,16 +278,16 @@ class UtilityMethods {
 
 
     // Upload the CSV file to Firebase Storage
-    suspend fun backupItemsCSVFile(context: Context, csvFile: File): Uri? {
+    suspend fun backupOrdersCSVFile(context: Context, csvFile: File, fileURI: Uri): Uri? {
+        Log.d("File", "Getting file from $fileURI")
         val storageReference = FirebaseStorage.getInstance().reference
         val date = getCurrentDateString("dd-MM-yyyy")
         val salesmanName = getSalesmanName(context)
 
         return try {
-            val fileUri = Uri.fromFile(csvFile)
             val storageRef =
                 storageReference.child("BACKUP/${salesmanName}/$date/${csvFile.name}")
-            val uploadTask = storageRef.putFile(fileUri).await()
+            val uploadTask = storageRef.putFile(fileURI).await()
             storageRef.downloadUrl.await()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -292,21 +295,29 @@ class UtilityMethods {
         }
     }
 
-    suspend fun backupCustomerOrderCSV(context: Context, csvFile: File): Uri? {
+    suspend fun backupCustomerOrderCSV(context: Context, csvFile: File, fileURI : Uri): Uri? {
         val storageReference = FirebaseStorage.getInstance().reference
         val date = getCurrentDateString("dd-MM-yyyy")
         val salesmanName = getSalesmanName(context)
 
         return try {
-            val fileUri = Uri.fromFile(csvFile)
             val storageRef =
                 storageReference.child("BACKUP/CUSTOMER_ORDER_BACKUPS/$date/${csvFile.name}")
-            val uploadTask = storageRef.putFile(fileUri).await()
+            val uploadTask = storageRef.putFile(fileURI).await()
             return storageRef.downloadUrl.await()
         } catch (e: Exception) {
             e.printStackTrace()
             null
         }
+    }
+
+    fun getFileUri(context: Context, file: File): Uri {
+        // Use FileProvider to generate a content URI
+        return FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.provider",  // Authority defined in the manifest
+            file
+        )
     }
 
 }

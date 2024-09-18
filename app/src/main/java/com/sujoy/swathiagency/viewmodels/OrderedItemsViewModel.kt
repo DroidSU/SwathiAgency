@@ -2,31 +2,23 @@ package com.sujoy.swathiagency.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sujoy.swathiagency.data.datamodels.CustomerOrderModel
-import com.sujoy.swathiagency.data.datamodels.OrderFileModel
+import com.sujoy.swathiagency.data.datamodels.OrdersTable
+import com.sujoy.swathiagency.utilities.DatabaseRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class OrderedItemsViewModel(private val fileObjectsRepository: DatabaseRepository) :
+class OrderedItemsViewModel(private val databaseRepository: DatabaseRepository) :
     ViewModel() {
 
-    fun createOrderFileInDB(fileObjectModels: OrderFileModel) {
-        viewModelScope.launch(Dispatchers.IO) {
-            fileObjectsRepository.insert(fileObjectModels)
-        }
-    }
+        private val _orderId = MutableStateFlow("")
+    val orderId : StateFlow<String> = _orderId
 
-    fun createCompanyOrderObject(companyOrderModel: CustomerOrderModel) {
+    fun createOrderObjectInDB(orderObject : OrdersTable){
         viewModelScope.launch (Dispatchers.IO) {
-            fileObjectsRepository.insertOrUpdateCustomerOrder(companyOrderModel)
+            databaseRepository.createNewOrder(orderObject)
+            _orderId.value = orderObject.orderId
         }
-    }
-
-    fun getCompanyOrderObject(orderId : String) : CustomerOrderModel? {
-        var companyOrderModel : CustomerOrderModel? = null
-        viewModelScope.launch (Dispatchers.IO) {
-            companyOrderModel = fileObjectsRepository.getCustomerOrderObjects(orderId)
-        }
-        return companyOrderModel
     }
 }

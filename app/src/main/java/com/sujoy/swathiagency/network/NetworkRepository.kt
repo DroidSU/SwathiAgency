@@ -10,7 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
-import java.io.File
 
 class NetworkRepository(private val context: Context) {
 
@@ -68,25 +67,6 @@ class NetworkRepository(private val context: Context) {
                 )
             val inputStream = storageFileRef.stream.await().stream
             val csvString = inputStream.bufferedReader().use(BufferedReader::readText)
-
-            val localFile: File = if (companyType == Constants.COMPANY_TYPE_ITC) {
-                File(context.filesDir, Constants.LOCAL_ITC_FILE_NAME)
-            } else {
-                File(context.filesDir, Constants.LOCAL_AVT_FILE_NAME)
-            }
-
-            if (localFile.exists()) {
-                localFile.delete()
-            }
-            localFile.createNewFile()
-
-            storageRef.getFile(localFile).addOnSuccessListener {
-                // File downloaded successfully
-                Log.d("File downloaded", "File downloaded to: ${localFile.absolutePath}")
-            }.addOnFailureListener { exception ->
-                // Handle any errors
-                println("Download failed: ${exception.message}")
-            }
 
             val rows = csvString.split("\n").map { it.split(",") }
             rows.drop(1)

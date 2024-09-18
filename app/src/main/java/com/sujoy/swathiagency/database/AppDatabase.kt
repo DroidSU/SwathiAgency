@@ -4,19 +4,22 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.sujoy.swathiagency.data.datamodels.Converters
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
-import com.sujoy.swathiagency.data.datamodels.CustomerOrderModel
 import com.sujoy.swathiagency.data.datamodels.ItemsModel
 import com.sujoy.swathiagency.data.datamodels.OrderFileModel
+import com.sujoy.swathiagency.data.datamodels.OrdersTable
 import com.sujoy.swathiagency.utilities.Constants
 
 @Database(
-    entities = [OrderFileModel::class, CustomerOrderModel::class, CustomerModel::class, ItemsModel::class],
-    version = 7,
+    entities = [OrderFileModel::class, CustomerModel::class, ItemsModel::class, OrdersTable::class],
+    version = 9,
     exportSchema = false
 )
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun orderDao(): OrderDao

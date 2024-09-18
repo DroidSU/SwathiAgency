@@ -3,12 +3,10 @@ package com.sujoy.swathiagency.ui
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -26,14 +24,11 @@ import com.sujoy.swathiagency.databinding.ActivityCustomerSelectionBinding
 import com.sujoy.swathiagency.interfaces.OnRecyclerItemClickedListener
 import com.sujoy.swathiagency.network.NetworkRepository
 import com.sujoy.swathiagency.utilities.Constants
+import com.sujoy.swathiagency.utilities.DatabaseRepository
 import com.sujoy.swathiagency.utilities.UtilityMethods
 import com.sujoy.swathiagency.viewmodels.CsvViewModelFactory
 import com.sujoy.swathiagency.viewmodels.CustomerSelectionViewModel
-import com.sujoy.swathiagency.viewmodels.DatabaseRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.File
 
 class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedListener {
 
@@ -169,21 +164,6 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
             )
             finish()
         }
-
-        lifecycleScope.launch {
-            viewModel.fileList.collect { data ->
-                if (data.isNotEmpty()) {
-                    fileObjectModelsList = data
-
-                    uploadBackupFiles()
-                }
-                else{
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(this@CustomerSelectionActivity, "No files to back up", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        }
     }
 
     override fun onStart() {
@@ -209,64 +189,12 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.backup_itc -> {
-                companyType = Constants.COMPANY_TYPE_ITC
-                viewModel.getFilesNotBackedUp(Constants.COMPANY_TYPE_ITC)
-                true
-            }
-
-            R.id.backup_avt -> {
-                companyType = Constants.COMPANY_TYPE_AVT
-                viewModel.getFilesNotBackedUp(Constants.COMPANY_TYPE_AVT)
-                true
-            }
-
             R.id.view_orders -> {
                 startActivity(Intent(this, ViewOrdersActivity::class.java))
                 true
             }
 
             else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    private fun uploadBackupFiles() {
-        lottieOverlayFragment.show(supportFragmentManager, "lottie_overlay")
-        try {
-            if (UtilityMethods.isNetworkAvailable(this@CustomerSelectionActivity)) {
-                lifecycleScope.launch(Dispatchers.IO) {
-                    if (fileObjectModelsList.isNotEmpty()) {
-
-                        for (fileObject in fileObjectModelsList) {
-                            val file = File(fileObject.fileURI)
-                            UtilityMethods().backupItemsCSVFile(
-                                this@CustomerSelectionActivity,
-                                file
-                            )
-                            viewModel.markFilesAsBackedUp(fileObject.orderId)
-                        }
-
-                        withContext(Dispatchers.Main) {
-                            lottieOverlayFragment.dismiss()
-                            Toast.makeText(
-                                this@CustomerSelectionActivity,
-                                "Order backed up successfully",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                }
-            } else {
-                lottieOverlayFragment.dismiss()
-                Toast.makeText(
-                    this@CustomerSelectionActivity,
-                    "No internet connection available. Order could not be backed up",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        } catch (ex: Exception) {
-            Log.e("ERROR", "uploadCurrentBackup: $ex")
-            lottieOverlayFragment.dismiss()
         }
     }
 }

@@ -14,22 +14,24 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujoy.swathiagency.R
 import com.sujoy.swathiagency.adapters.OrderedItemsRecyclerAdapter
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
-import com.sujoy.swathiagency.data.datamodels.CustomerOrderModel
 import com.sujoy.swathiagency.data.datamodels.ItemsModel
-import com.sujoy.swathiagency.data.datamodels.OrderFileModel
+import com.sujoy.swathiagency.data.datamodels.OrdersTable
 import com.sujoy.swathiagency.database.AppDatabase
 import com.sujoy.swathiagency.databinding.ActivityOrderedItemsBinding
 import com.sujoy.swathiagency.utilities.Constants
+import com.sujoy.swathiagency.utilities.DatabaseRepository
 import com.sujoy.swathiagency.utilities.UtilityMethods
 import com.sujoy.swathiagency.utilities.UtilityMethods.Companion.showAlertDialog
-import com.sujoy.swathiagency.viewmodels.DatabaseRepository
 import com.sujoy.swathiagency.viewmodels.OrderedItemsVMFactory
 import com.sujoy.swathiagency.viewmodels.OrderedItemsViewModel
-import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -42,6 +44,7 @@ class OrderedItemsActivity : AppCompatActivity() {
     private lateinit var orderedItemsRecyclerAdapter: OrderedItemsRecyclerAdapter
     private var companyType = Constants.COMPANY_TYPE_ITC
     private var orderId: String = ""
+    private var timestamp = ""
 
 
     // Register the permission request callback
@@ -112,6 +115,42 @@ class OrderedItemsActivity : AppCompatActivity() {
             )
             finish()
         }
+
+        lifecycleScope.launch {
+            viewModel.orderId.collect { value ->
+                withContext(Dispatchers.Main) {
+                    if(value.isNotEmpty()){
+                        Toast.makeText(
+                            this@OrderedItemsActivity,
+                            "Order Created Successfully!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        lottieOverlayFragment.dismiss()
+                        UtilityMethods.setBillNumber(
+                            this@OrderedItemsActivity,
+                            billNumber = UtilityMethods.getBillNumber(this@OrderedItemsActivity, companyType) + 1,
+                            UtilityMethods.getBillId(this@OrderedItemsActivity, companyType),
+                            companyType
+                        )
+
+                        if(companyType == Constants.COMPANY_TYPE_ITC){
+                            startActivity(
+                                Intent(this@OrderedItemsActivity, ViewItemsActivity::class.java).putExtra(
+                                    "customer_model",
+                                    customerModel
+                                ).putExtra("current_item", 1)
+                            )
+                        }
+                        else{
+                            startActivity(
+                                Intent(this@OrderedItemsActivity, CustomerSelectionActivity::class.java)
+                            )
+                        }
+                        finish()
+                    }
+                }
+            }
+        }
     }
 
     private fun completeOrder() {
@@ -147,74 +186,34 @@ class OrderedItemsActivity : AppCompatActivity() {
     private fun onPermissionGranted() {
         lottieOverlayFragment.show(supportFragmentManager, "lottie_overlay")
 
+        timestamp = UtilityMethods.getCurrentDateString("ddMMyyyy_HHmmss")
         val csvFile = UtilityMethods().createOrUpdateCsvFile(
             this,
             orderedItemsList,
             customerModel,
-            companyType
+            companyType,
+            timestamp
         )
 
         if (csvFile!!.exists()) {
-            saveOrderInDB(csvFile)
-
-            Toast.makeText(
-                this,
-                "Order Created Successfully!",
-                Toast.LENGTH_SHORT
-            ).show()
-            lottieOverlayFragment.dismiss()
-            UtilityMethods.setBillNumber(
-                this,
-                billNumber = UtilityMethods.getBillNumber(this, companyType) + 1,
-                UtilityMethods.getBillId(this, companyType),
-                companyType
-            )
-
-            if(companyType == Constants.COMPANY_TYPE_ITC){
-                startActivity(
-                    Intent(this, ViewItemsActivity::class.java).putExtra(
-                        "customer_model",
-                        customerModel
-                    ).putExtra("current_item", 1)
-                )
-            }
-            else{
-                startActivity(
-                    Intent(this, CustomerSelectionActivity::class.java)
-                )
-            }
-            finish()
+            saveOrderInDB(csvFile.nameWithoutExtension, UtilityMethods().getFileUri(this, csvFile).toString())
         }
     }
 
-    private fun saveOrderInDB(csvFile: File) {
-        orderId = "${customerModel.customerName}_${companyType}_${UtilityMethods.getCurrentDateString("ddMMyyyy")}"
-
-        val orderFileDBObject = OrderFileModel(
-            fileName = csvFile.nameWithoutExtension,
-            createdBy = customerModel.customerName,
-            createdOn = UtilityMethods.getCurrentDateString("dd-MM-yyyy"),
-            fileURI = csvFile.absolutePath,
-            companyName = companyType,
+    private fun saveOrderInDB(filename : String, fileURI : String) {
+        orderId = "ORD_${timestamp}"
+        val orderObject = OrdersTable(
+            orderId = orderId,
             customerName = customerModel.customerName,
-            orderId = orderId
+            orderTotal = totalBillAmount,
+            createdDate = UtilityMethods.getCurrentDateString("dd-MM-yyyy"),
+            companyName = companyType,
+            orderFileName = filename,
+            orderedItemList = orderedItemsList.toList(),
+            isBackedUp = false,
+            fileURI = fileURI
         )
-
-        viewModel.createOrderFileInDB(orderFileDBObject)
-        var companyOrderModel: CustomerOrderModel? = viewModel.getCompanyOrderObject(orderId)
-        if (companyOrderModel == null) {
-            companyOrderModel = CustomerOrderModel(
-                orderId = orderId,
-                customerName = customerModel.customerName,
-                orderTotal = totalBillAmount,
-                date = UtilityMethods.getCurrentDateString("dd-MM-yyyy"),
-                companyName = companyType
-            )
-            viewModel.createCompanyOrderObject(companyOrderModel)
-        } else {
-            companyOrderModel.orderTotal += totalBillAmount
-            viewModel.createCompanyOrderObject(companyOrderModel)
-        }
+        viewModel.createOrderObjectInDB(orderObject)
     }
 
     private fun showPermissionRationale() {

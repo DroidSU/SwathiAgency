@@ -43,4 +43,7 @@
     <string name="backup_orders_avt">Backup AVT orders\n</string>
     <string name="view_orders">View Orders</string>
     <string name="search_by_name">Search by Name</string>
+    <string name="all_orders_have_been_backed_up">All orders have been backed up.</string>
+    <string name="backup_all_orders">Backup all orders</string>
+    <string name="backup_orders">Backup Orders</string>
 </resources>

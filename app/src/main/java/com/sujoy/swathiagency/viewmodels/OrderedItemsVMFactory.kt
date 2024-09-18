@@ -2,6 +2,7 @@ package com.sujoy.swathiagency.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.sujoy.swathiagency.utilities.DatabaseRepository
 
 class OrderedItemsVMFactory(private val repository: DatabaseRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

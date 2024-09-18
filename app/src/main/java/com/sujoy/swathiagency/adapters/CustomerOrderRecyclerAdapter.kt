@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sujoy.swathiagency.R
-import com.sujoy.swathiagency.data.datamodels.CustomerOrderModel
+import com.sujoy.swathiagency.data.datamodels.OrdersTable
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class CustomerOrderRecyclerAdapter(private val customerOrderList: MutableList<CustomerOrderModel>) :
+class CustomerOrderRecyclerAdapter(private val customerOrderList: MutableList<OrdersTable>) :
     RecyclerView.Adapter<CustomerOrderRecyclerAdapter.CustomerOrderViewHolder>() {
 
     inner class CustomerOrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -33,14 +33,14 @@ class CustomerOrderRecyclerAdapter(private val customerOrderList: MutableList<Cu
     override fun onBindViewHolder(holder: CustomerOrderViewHolder, position: Int) {
         val currentItem = customerOrderList[position]
 
-        holder.tvOrderDate.text = currentItem.date
+        holder.tvOrderDate.text = currentItem.createdDate
         holder.tvCustomerName.text = currentItem.customerName
         holder.tvTotalValue.text = BigDecimal(currentItem.orderTotal.toString()).setScale(2, RoundingMode.HALF_UP).toFloat()
             .toString()
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateData(newList : MutableList<CustomerOrderModel>) {
+    fun updateData(newList : MutableList<OrdersTable>) {
         customerOrderList.clear()
         customerOrderList.addAll(newList)
         notifyDataSetChanged()

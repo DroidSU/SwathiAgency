@@ -2,6 +2,7 @@ package com.sujoy.swathiagency.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.sujoy.swathiagency.utilities.DatabaseRepository
 
 class ViewOrderVMFactory(private val repository: DatabaseRepository) : ViewModelProvider.Factory {
 

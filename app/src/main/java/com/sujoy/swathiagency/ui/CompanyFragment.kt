@@ -23,11 +23,11 @@ import com.sujoy.swathiagency.interfaces.OnItemEvent
 import com.sujoy.swathiagency.interfaces.OnSubmitButtonTapped
 import com.sujoy.swathiagency.network.NetworkRepository
 import com.sujoy.swathiagency.utilities.Constants
+import com.sujoy.swathiagency.utilities.DatabaseRepository
 import com.sujoy.swathiagency.utilities.UtilityMethods
 import com.sujoy.swathiagency.utilities.UtilityMethods.Companion.showAlertDialog
 import com.sujoy.swathiagency.viewmodels.CompanyVMFactory
 import com.sujoy.swathiagency.viewmodels.CompanyViewModel
-import com.sujoy.swathiagency.viewmodels.DatabaseRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

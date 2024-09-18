@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menu_opt_1"
-        android:title="@string/filter_by_customer_name"/>
+        android:id="@+id/backup_itc"
+        android:title="@string/backup_orders_itc"/>
     <item
-        android:id="@+id/menu_opt_2"
-        android:title="@string/filter_by_customer_route" />
+        android:id="@+id/backup_avt"
+        android:title="@string/backup_orders_avt" />
+
+<!--    <item-->
+<!--        android:id="@+id/backup_all"-->
+<!--        android:title="@string/backup_all_orders" />-->
 </menu>

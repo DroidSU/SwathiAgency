@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
-import com.sujoy.swathiagency.data.datamodels.OrderFileModel
 import com.sujoy.swathiagency.network.NetworkRepository
+import com.sujoy.swathiagency.utilities.DatabaseRepository
 import com.sujoy.swathiagency.utilities.UtilityMethods
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,8 +13,6 @@ import kotlinx.coroutines.launch
 
 class CustomerSelectionViewModel(private val repository: NetworkRepository, private val databaseRepository : DatabaseRepository) : ViewModel() {
 
-    private val _fileList = MutableStateFlow<List<OrderFileModel>>(listOf())
-    val fileList : StateFlow<List<OrderFileModel>> = _fileList
     private val _csvData = MutableStateFlow<ArrayList<CustomerModel>>(arrayListOf())
     val csvData: StateFlow<ArrayList<CustomerModel>> = _csvData
 
@@ -29,19 +27,6 @@ class CustomerSelectionViewModel(private val repository: NetworkRepository, priv
                 val data = databaseRepository.getAllCustomers()
                 _csvData.value = data
             }
-        }
-    }
-
-    fun getFilesNotBackedUp(companyType : String) {
-        viewModelScope.launch {
-            val data = databaseRepository.getFilesNotBackedUp(companyType)
-            _fileList.value = data
-        }
-    }
-
-    fun markFilesAsBackedUp(orderId : String) {
-        viewModelScope.launch {
-            databaseRepository.markAsBackedUp(orderId = orderId)
         }
     }
 }
