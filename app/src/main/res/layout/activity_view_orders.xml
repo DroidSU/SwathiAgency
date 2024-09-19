@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@id/ll_orders_header"
+            app:layout_constraintBottom_toTopOf="@id/ll_total_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_orders"
@@ -93,13 +93,55 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_total_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_type_filter">
+
+
+            <TextView
+                android:id="@+id/tv_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/total"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:layout_weight="8"
+                android:layout_marginEnd="10dp"/>
+
+            <TextView
+                android:id="@+id/tv_total_rs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/rs"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp"
+                android:textAlignment="viewEnd"/>
+
+            <TextView
+                android:id="@+id/tv_total_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/_0000"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/ll_orders_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ll_type_filter">
+            app:layout_constraintTop_toBottomOf="@id/ll_total_view">
 
             <TextView
                 android:layout_width="0dp"
@@ -133,10 +175,14 @@
             android:id="@+id/rv_orders"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ll_orders_header" />
+            app:layout_constraintTop_toBottomOf="@id/ll_orders_header"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
             android:id="@+id/tv_all_orders_backed_up"
@@ -150,50 +196,6 @@
             android:textColor="@android:color/darker_gray"
             android:gravity="center"
             android:visibility="gone"/>
-
-        <LinearLayout
-            android:id="@+id/ll_total_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rv_orders">
-
-
-            <TextView
-                android:id="@+id/tv_total"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/total"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                android:layout_weight="1"
-                android:layout_marginEnd="10dp"/>
-
-            <TextView
-                android:id="@+id/tv_total_rs"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/rs"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                android:layout_weight="1"
-                android:layout_marginEnd="5dp"/>
-
-            <TextView
-                android:id="@+id/tv_total_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="@string/_0000"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"/>
-        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -282,11 +282,12 @@ class UtilityMethods {
         Log.d("File", "Getting file from $fileURI")
         val storageReference = FirebaseStorage.getInstance().reference
         val date = getCurrentDateString("dd-MM-yyyy")
-        val salesmanName = getSalesmanName(context)
+        val currentTime = getCurrentDateString("hh:mm a")
+//        val salesmanName = getSalesmanName(context)
 
         return try {
             val storageRef =
-                storageReference.child("BACKUP/${salesmanName}/$date/${csvFile.name}")
+                storageReference.child("BACKUP/$date/$currentTime/${csvFile.name}")
             val uploadTask = storageRef.putFile(fileURI).await()
             storageRef.downloadUrl.await()
         } catch (e: Exception) {
@@ -298,11 +299,12 @@ class UtilityMethods {
     suspend fun backupCustomerOrderCSV(context: Context, csvFile: File, fileURI : Uri): Uri? {
         val storageReference = FirebaseStorage.getInstance().reference
         val date = getCurrentDateString("dd-MM-yyyy")
-        val salesmanName = getSalesmanName(context)
+        val currentTime = getCurrentDateString("hh:mm a")
+//        val salesmanName = getSalesmanName(context)
 
         return try {
             val storageRef =
-                storageReference.child("BACKUP/CUSTOMER_ORDER_BACKUPS/$date/${csvFile.name}")
+                storageReference.child("BACKUP/$date/$currentTime/${csvFile.name}")
             val uploadTask = storageRef.putFile(fileURI).await()
             return storageRef.downloadUrl.await()
         } catch (e: Exception) {

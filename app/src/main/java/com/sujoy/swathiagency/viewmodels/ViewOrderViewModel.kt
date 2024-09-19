@@ -13,7 +13,9 @@ import com.sujoy.swathiagency.utilities.Constants
 import com.sujoy.swathiagency.utilities.DatabaseRepository
 import com.sujoy.swathiagency.utilities.UtilityMethods
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -32,16 +34,16 @@ class ViewOrderViewModel(private val repository: DatabaseRepository) : ViewModel
     private val _orderTotalUri: MutableLiveData<Uri> = MutableLiveData()
     val orderTotalFileUri: LiveData<Uri> get() = _orderTotalUri
 
-    private val _uploadSuccess = MutableStateFlow(false)
-    val uploadSuccess: StateFlow<Boolean> get() = _uploadSuccess
+    private val _uploadSuccess = MutableSharedFlow<Boolean>()
+    val uploadSuccess: SharedFlow<Boolean> get() = _uploadSuccess
 
     /*
     viewType = 0 -> All
     viewType = 1 -> ITC
     viewType = 2 -> AVT
      */
-    private val _viewType: MutableLiveData<Int> = MutableLiveData(0)
-    val viewType: LiveData<Int> get() = _viewType
+    private val _viewType: MutableStateFlow<Int> = MutableStateFlow(1)
+    val viewType: StateFlow<Int> get() = _viewType
 
     fun getAllOrderObjects() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -93,7 +95,7 @@ class ViewOrderViewModel(private val repository: DatabaseRepository) : ViewModel
             }
 
             withContext(Dispatchers.Main) {
-                _uploadSuccess.value = backupURI != null
+                _uploadSuccess.emit(backupURI != null)
             }
         }
     }

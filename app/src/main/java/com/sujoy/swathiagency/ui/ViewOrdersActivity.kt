@@ -110,10 +110,12 @@ class ViewOrdersActivity : AppCompatActivity() {
             }
         }
 
-        lifecycleScope.launch {
-            viewModel.viewType.observe(this@ViewOrdersActivity) { value ->
-                viewType.value = value
-                updateDataOnUI()
+        lifecycleScope.launch(Dispatchers.IO) {
+            viewModel.viewType.collect { data ->
+                withContext(Dispatchers.Main) {
+                    viewType.value = data
+                    updateDataOnUI()
+                }
             }
         }
 
@@ -161,27 +163,26 @@ class ViewOrdersActivity : AppCompatActivity() {
                     true
                 }
 
-                R.id.backup_all -> {
-//                    backupOrders("")
-//                    backupTotalOrder()
-                    true
-                }
+//                R.id.backup_all -> {
+////                    backupOrders("")
+////                    backupTotalOrder()
+//                    true
+//                }
 
                 else -> false
             }
         }
 
-        // Show the PopupMenu
         popupMenu.show()
     }
 
     private fun updateDataOnUI() {
         when (viewType.value) {
             0 -> {
-                binding.ctvShowAll.isChecked = true
-                binding.ctvShowItc.isChecked = false
-                binding.ctvShowAvt.isChecked = false
-                viewModel.getAllOrderObjects()
+//                binding.ctvShowAll.isChecked = true
+//                binding.ctvShowItc.isChecked = false
+//                binding.ctvShowAvt.isChecked = false
+//                viewModel.getAllOrderObjects()
             }
 
             1 -> {
@@ -201,23 +202,14 @@ class ViewOrdersActivity : AppCompatActivity() {
 
     }
 
-    override fun onStart() {
-        super.onStart()
-        updateDataOnUI()
-    }
-
     private fun backupOrders(companyType: String) {
         if (UtilityMethods.isNetworkAvailable(this)) {
             lottieOverlayFragment.show(supportFragmentManager, "lottie_overlay")
             lifecycleScope.launch(Dispatchers.IO) {
-                if (companyType == "") {
-                    viewModel.backupOrders(this@ViewOrdersActivity, ordersArrayList)
-                } else {
-                    viewModel.backupOrders(
-                        this@ViewOrdersActivity,
-                        ordersArrayList.filter { it.companyName == companyType }.toList()
-                    )
-                }
+                viewModel.backupOrders(
+                    this@ViewOrdersActivity,
+                    ordersArrayList.filter { it.companyName == companyType }.toList()
+                )
             }
         } else {
             Toast.makeText(this, "No network available", Toast.LENGTH_SHORT).show()
@@ -229,10 +221,9 @@ class ViewOrdersActivity : AppCompatActivity() {
             val customerOrderTotalList: MutableList<CustomerOrderModel> = mutableListOf()
             var totalValue = 0L
             var orderList = ordersArrayList.toList()
-            if(viewType.value == 1){
+            if (viewType.value == 1) {
                 orderList = orderList.filter { it.companyName == Constants.COMPANY_TYPE_ITC }
-            }
-            else if(viewType.value == 2){
+            } else if (viewType.value == 2) {
                 orderList = orderList.filter { it.companyName == Constants.COMPANY_TYPE_AVT }
             }
 
