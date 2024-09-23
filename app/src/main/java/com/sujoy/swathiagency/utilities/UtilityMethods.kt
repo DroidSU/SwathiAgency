@@ -220,7 +220,7 @@ class UtilityMethods {
                             "$billId-$billNumber",
                             "N",
                             "Sales Account",
-                            "ITC",
+                            companyType,
                             salesmanName,
                             customerModel.customerRoute,
                             date,
