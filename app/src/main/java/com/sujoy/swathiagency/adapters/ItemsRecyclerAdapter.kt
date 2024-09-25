@@ -27,6 +27,8 @@ class ItemsRecyclerAdapter(
 ) :
     RecyclerView.Adapter<ItemsRecyclerAdapter.ItemsViewHolder>() {
 
+    private var orderedItemList = mutableListOf<ItemsModel>()
+
     inner class ItemsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvItemName: TextView = itemView.findViewById(R.id.item_name)
         val boxIncrementButton: Button = itemView.findViewById(R.id.btn_increment_box)
@@ -43,8 +45,8 @@ class ItemsRecyclerAdapter(
         val totalAmountContainer: LinearLayout = itemView.findViewById(R.id.ll_item_total_amount)
         val mainConstraintLayout: ConstraintLayout = itemView.findViewById(R.id.cl_item_main)
 
-        var boxTextWatcher : TextWatcher? = null
-        var pcsTextWatcher : TextWatcher? = null
+        var boxTextWatcher: TextWatcher? = null
+        var pcsTextWatcher: TextWatcher? = null
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemsViewHolder {
@@ -60,7 +62,14 @@ class ItemsRecyclerAdapter(
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ItemsViewHolder, position: Int) {
         val currentPosition = holder.adapterPosition
-        val currentItem = itemList[currentPosition]
+        var currentItem = itemList[currentPosition]
+
+        if (orderedItemList.any {
+                it.itemID == currentItem.itemID
+            }) {
+            val index = orderedItemList.indexOfFirst { it.itemID == currentItem.itemID }
+            currentItem = orderedItemList[index]
+        }
 
         // Detach the listener before setting the text
         holder.boxCountEditText.removeTextChangedListener(holder.boxTextWatcher)
@@ -70,11 +79,10 @@ class ItemsRecyclerAdapter(
         holder.textViewAvailable.text = currentItem.availableQuantity
         holder.textViewMRP.text = currentItem.mrp
 
-        if (currentItem.availableQuantity.toFloatOrNull() == null || currentItem.availableQuantity.toFloat() < 0F){
+        if (currentItem.availableQuantity.toFloatOrNull() == null || currentItem.availableQuantity.toFloat() < 0F) {
             holder.textViewAvailable.setTextColor(context.getColor(android.R.color.holo_red_light))
             holder.tvItemName.setTextColor(context.getColor(android.R.color.holo_red_light))
-        }
-        else{
+        } else {
             holder.textViewAvailable.setTextColor(context.getColor(R.color.black))
             holder.tvItemName.setTextColor(context.getColor(R.color.black))
         }
@@ -85,16 +93,16 @@ class ItemsRecyclerAdapter(
             holder.totalAmountContainer.visibility = View.VISIBLE
             holder.textViewTotalValue.text = "${currentItem.totalAmount}"
 
-            if (currentItem.numberOfBoxesOrdered > 0)
+            if (currentItem.numberOfBoxesOrdered > 0) {
                 holder.boxCountEditText.setText(currentItem.numberOfBoxesOrdered.toString())
-            else {
+            } else {
                 holder.boxCountEditText.setText("")
                 holder.boxCountEditText.hint = "0"
             }
 
-            if (currentItem.numberOfPcsOrdered > 0)
+            if (orderedItemList.contains(currentItem)) {
                 holder.pcsCountEditText.setText(currentItem.numberOfPcsOrdered.toString())
-            else {
+            } else {
                 holder.pcsCountEditText.setText("")
                 holder.pcsCountEditText.hint = "0"
             }
@@ -113,7 +121,7 @@ class ItemsRecyclerAdapter(
                     currentItem.numberOfBoxesOrdered = 0
                 }
 
-                updateTotalValue(holder, currentItem)
+//                updateTotalValue(holder, currentItem)
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -130,7 +138,7 @@ class ItemsRecyclerAdapter(
                     currentItem.numberOfPcsOrdered = 0
                 }
 
-                updateTotalValue(holder, currentItem)
+//                updateTotalValue(holder, currentItem)
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -181,6 +189,14 @@ class ItemsRecyclerAdapter(
         holder: ItemsViewHolder,
         currentItem: ItemsModel
     ) {
+        if (orderedItemList.contains(currentItem)) {
+            orderedItemList.remove(currentItem)
+            orderedItemList.add(currentItem)
+        } else {
+            if (currentItem.selected)
+                orderedItemList.add(currentItem)
+        }
+
         UtilityMethods.calculateItemTotalValue(currentItem)
         holder.textViewTotalValue.text =
             BigDecimal(currentItem.totalAmount.toString()).setScale(2, RoundingMode.HALF_UP)

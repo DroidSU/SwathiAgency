@@ -16,7 +16,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CompanyViewModel(private val repository: NetworkRepository, private val databaseRepository: DatabaseRepository) : ViewModel() {
+class CompanyViewModel(
+    private val repository: NetworkRepository,
+    private val databaseRepository: DatabaseRepository
+) : ViewModel() {
     private val _itemData = MutableStateFlow<ArrayList<ItemsModel>>(arrayListOf())
     val itemData: StateFlow<ArrayList<ItemsModel>> = _itemData
     private val _categories = MutableStateFlow<MutableList<String>>(arrayListOf())
@@ -32,19 +35,18 @@ class CompanyViewModel(private val repository: NetworkRepository, private val da
         _itemListOfSelectedCategories
 
     private val _orderedItemsList = MutableStateFlow<MutableList<ItemsModel>>(mutableListOf())
-    val orderedItemsList : StateFlow<MutableList<ItemsModel>> = _orderedItemsList
+    val orderedItemsList: StateFlow<MutableList<ItemsModel>> = _orderedItemsList
 
-    fun fetchItemData(context : Context, fileUrl: String, companyType : String) {
+    fun fetchItemData(context: Context, fileUrl: String, companyType: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            if(UtilityMethods.isNetworkAvailable(context)){
+            if (UtilityMethods.isNetworkAvailable(context)) {
                 val data = repository.getItemsCSV(companyType)
                 databaseRepository.addItems(data.toList())
                 withContext(Dispatchers.Main) {
                     _itemData.value = data
                     getAllCategories()
                 }
-            }
-            else{
+            } else {
                 val data = databaseRepository.getAllItemsFromCompany(companyType)
                 withContext(Dispatchers.Main) {
                     _itemData.value = data
@@ -61,10 +63,14 @@ class CompanyViewModel(private val repository: NetworkRepository, private val da
 
     fun getItemsInSelectedCategory(selectedCategory: String) {
         if (selectedCategory.isNotEmpty()) {
+            // Check if the category data is already cached
+
             _itemListOfSelectedCategories.value =
-                _itemData.value.filter { it.itemGroup == selectedCategory }.sortedBy { it.taxablePcsRate.toFloat() }.toMutableList()
+                _itemData.value.filter { it.itemGroup == selectedCategory }
+                    .sortedBy { it.taxablePcsRate.toFloat() }.toMutableList()
         } else {
-            _itemListOfSelectedCategories.value = _itemData.value.sortedBy { it.taxablePcsRate.toFloat() }.toMutableList()
+            _itemListOfSelectedCategories.value =
+                _itemData.value.sortedBy { it.taxablePcsRate.toFloat() }.toMutableList()
         }
     }
 
@@ -81,13 +87,18 @@ class CompanyViewModel(private val repository: NetworkRepository, private val da
         _selectedCustomerModel.value = selectedCustomerModel
     }
 
-    fun addOrderItem(currentItem : ItemsModel){
-        _orderedItemsList.value.removeIf { it.itemName == currentItem.itemName && (currentItem.numberOfBoxesOrdered >= 0 || currentItem.numberOfPcsOrdered >= 0) }
+    fun addOrderItem(currentItem: ItemsModel) {
+        if (currentItem.selected) {
+            if (_orderedItemsList.value.any{ it.itemID == currentItem.itemID}) {
+                val currentItemIndex = _orderedItemsList.value.indexOfFirst { it.itemID == currentItem.itemID }
+                if (currentItemIndex != -1) {
+                    _orderedItemsList.value[currentItemIndex] = currentItem
+                }
+            } else {
+                _orderedItemsList.value.add(currentItem)
+            }
 
-        if (currentItem.numberOfBoxesOrdered > 0 || currentItem.numberOfPcsOrdered > 0) {
-            _orderedItemsList.value.add(currentItem)
+            updateTotalBillValue()
         }
-
-        updateTotalBillValue()
     }
 }
