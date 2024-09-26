@@ -14,6 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.sujoy.swathiagency.adapters.ItemsRecyclerAdapter
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
 import com.sujoy.swathiagency.data.datamodels.ItemsModel
@@ -81,6 +82,9 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentItcBinding.inflate(inflater, container, false)
+
+
+
         return binding.root
     }
 
@@ -133,6 +137,8 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
                     },
                     { return@showAlertDialog })
             } else {
+                val resultLauncher = (requireActivity() as ViewItemsActivity).getResultLauncher()
+
                 val intent = Intent(requireActivity(), OrderedItemsActivity::class.java)
                 intent.putParcelableArrayListExtra(
                     "ordered_item_list",
@@ -141,7 +147,8 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
                 intent.putExtra(CUSTOMER_MODEL_KEY, selectedCustomer)
                 intent.putExtra(COMPANY_TYPE_KEY, companyType)
                 intent.putExtra(TOTAL_BILL, viewModel.totalBill.value)
-                startActivity(intent)
+//                startActivity(intent)
+                resultLauncher.launch(intent)
             }
         }
 
@@ -166,6 +173,17 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
             binding.lvCategoryItemLoading.visibility = View.VISIBLE
             viewModel.getItemsInSelectedCategory(selectedCategory)
         }
+
+        binding.recyclerCategoryItems.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    // Hide the keyboard when scrolling starts
+                    UtilityMethods.hideKeyBoard(binding.recyclerCategoryItems, requireContext())
+                }
+            }
+        })
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.itemData.collect { data ->

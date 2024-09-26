@@ -1,10 +1,13 @@
 package com.sujoy.swathiagency.ui
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -20,7 +23,39 @@ class ViewItemsActivity : AppCompatActivity() {
 
     private var selectedCustomer: CustomerModel? = null
     private lateinit var viewPagerAdapter: CompanyViewPagerAdapter
-    private var currentItem = 0
+    private var isITCOrderCreated = false
+    private var isAVTOrderCreated = false
+
+    @SuppressLint("NotifyDataSetChanged")
+    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val companyType = result.data?.getStringExtra("company")
+
+            if(companyType == "ITC"){
+                isITCOrderCreated = true
+            }
+
+            if(companyType == "AVT"){
+                isAVTOrderCreated = true
+            }
+
+            if(isITCOrderCreated && isAVTOrderCreated){
+                startActivity(Intent(this@ViewItemsActivity, CustomerSelectionActivity::class.java))
+                finish()
+            }
+            else{
+                if(isITCOrderCreated){
+                    binding.viewpagerCompany.setCurrentItem(1, true)
+                }
+                else{
+                    binding.viewpagerCompany.setCurrentItem(0, true)
+                }
+            }
+        }
+    }
+
+    // Method to provide a way for fragments to access the result launcher
+    fun getResultLauncher() = resultLauncher
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,11 +79,10 @@ class ViewItemsActivity : AppCompatActivity() {
         })
 
         selectedCustomer = intent.getParcelableExtra("customer_model")
-        currentItem = intent.getIntExtra("current_item", 0)
 
         viewPagerAdapter = selectedCustomer?.let { CompanyViewPagerAdapter(this, it) }!!
         binding.viewpagerCompany.adapter = viewPagerAdapter
-        binding.viewpagerCompany.setCurrentItem(currentItem, true)
+
 
         TabLayoutMediator(
             binding.tlCompanyTabs,
@@ -93,7 +127,5 @@ class ViewItemsActivity : AppCompatActivity() {
             }
 
         })
-
-
     }
 }

@@ -1,6 +1,7 @@
 package com.sujoy.swathiagency.ui
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -107,12 +108,12 @@ class OrderedItemsActivity : AppCompatActivity() {
         }
 
         binding.btnCancelOrder.setOnClickListener {
-            startActivity(
-                Intent(this, ViewItemsActivity::class.java).putExtra(
-                    "customer_model",
-                    customerModel
-                )
-            )
+//            startActivity(
+//                Intent(this, ViewItemsActivity::class.java).putExtra(
+//                    "customer_model",
+//                    customerModel
+//                )
+//            )
             finish()
         }
 
@@ -133,20 +134,11 @@ class OrderedItemsActivity : AppCompatActivity() {
                             companyType
                         )
 
-                        if(companyType == Constants.COMPANY_TYPE_ITC){
-                            startActivity(
-                                Intent(this@OrderedItemsActivity, ViewItemsActivity::class.java).putExtra(
-                                    "customer_model",
-                                    customerModel
-                                ).putExtra("current_item", 1)
-                            )
-                        }
-                        else{
-                            startActivity(
-                                Intent(this@OrderedItemsActivity, CustomerSelectionActivity::class.java)
-                            )
-                        }
+                        val resultIntent = Intent()
+                        resultIntent.putExtra("company", companyType)
+                        setResult(Activity.RESULT_OK, resultIntent)
                         finish()
+
                     }
                 }
             }
@@ -192,7 +184,6 @@ class OrderedItemsActivity : AppCompatActivity() {
             orderedItemsList,
             customerModel,
             companyType,
-            timestamp
         )
 
         if (csvFile!!.exists()) {

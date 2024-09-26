@@ -179,8 +179,7 @@ class UtilityMethods {
         context: Context,
         data: List<ItemsModel>,
         customerModel: CustomerModel,
-        companyType: String,
-        timestamp: String
+        companyType: String
     ): File? {
         try {
             val date = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())
