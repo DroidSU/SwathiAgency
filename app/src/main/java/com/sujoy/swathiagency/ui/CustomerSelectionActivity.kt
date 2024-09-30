@@ -194,6 +194,14 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
                 true
             }
 
+
+//            R.id.settings -> {
+//                UtilityMethods.showAlertDialog(this, "Please pay Rs. 5000 to the following UPI : 6289604521@axl", {}, {
+//                    return@showAlertDialog
+//                })
+//                true
+//            }
+
             else -> super.onOptionsItemSelected(item)
         }
     }

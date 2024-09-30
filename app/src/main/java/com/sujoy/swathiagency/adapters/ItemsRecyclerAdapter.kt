@@ -121,7 +121,7 @@ class ItemsRecyclerAdapter(
                     currentItem.numberOfBoxesOrdered = 0
                 }
 
-//                updateTotalValue(holder, currentItem)
+                updateTotalValue(holder, currentItem)
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -138,7 +138,7 @@ class ItemsRecyclerAdapter(
                     currentItem.numberOfPcsOrdered = 0
                 }
 
-//                updateTotalValue(holder, currentItem)
+                updateTotalValue(holder, currentItem)
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}

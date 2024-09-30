@@ -139,10 +139,12 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
             } else {
                 val resultLauncher = (requireActivity() as ViewItemsActivity).getResultLauncher()
 
+                val arraylist = viewModel.orderedItemsList.value
+                arraylist.removeAll { (it.numberOfBoxesOrdered == 0 && it.numberOfPcsOrdered == 0) }
                 val intent = Intent(requireActivity(), OrderedItemsActivity::class.java)
                 intent.putParcelableArrayListExtra(
                     "ordered_item_list",
-                    ArrayList(viewModel.orderedItemsList.value)
+                    ArrayList(arraylist)
                 )
                 intent.putExtra(CUSTOMER_MODEL_KEY, selectedCustomer)
                 intent.putExtra(COMPANY_TYPE_KEY, companyType)

@@ -37,7 +37,6 @@ class UtilityMethods {
             onNegativeClicked: () -> Unit,
         ) {
             val builder = AlertDialog.Builder(context)
-//            builder.setTitle("Alert Dialog")
             builder.setMessage(dialogMessage)
 
             // Positive button
