@@ -218,4 +218,10 @@ class ItemsRecyclerAdapter(
         itemList.addAll(newItems)
         notifyDataSetChanged()
     }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun setOrderedItems(itemsList : MutableList<ItemsModel>){
+         orderedItemList = itemsList
+        notifyDataSetChanged()
+    }
 }

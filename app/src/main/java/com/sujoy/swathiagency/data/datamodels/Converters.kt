@@ -17,4 +17,16 @@ class Converters {
         val listType = object : TypeToken<List<ItemsModel>>() {}.type
         return Gson().fromJson(value, listType)
     }
+
+    @TypeConverter
+    fun fromCustomerModel(value: CustomerModel?): String {
+        val gson = Gson()
+        return gson.toJson(value)
+    }
+
+    @TypeConverter
+    fun toCustomerModel(value: String): CustomerModel? {
+        val objectType = object : TypeToken<CustomerModel>() {}.type
+        return Gson().fromJson(value, objectType)
+    }
 }

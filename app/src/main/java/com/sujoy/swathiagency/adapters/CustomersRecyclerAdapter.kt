@@ -10,12 +10,12 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.sujoy.swathiagency.R
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
-import com.sujoy.swathiagency.interfaces.OnRecyclerItemClickedListener
+import com.sujoy.swathiagency.interfaces.OnCustomerRecyclerItemClick
 
 class CustomersRecyclerAdapter(
     var context: Context,
     private var customerList: List<CustomerModel>,
-    private var onRecyclerItemClickedListener: OnRecyclerItemClickedListener
+    private var onRecyclerItemClickedListener: OnCustomerRecyclerItemClick
 ) :
     RecyclerView.Adapter<CustomersRecyclerAdapter.CustomersViewHolder>() {
 
@@ -63,7 +63,7 @@ class CustomersRecyclerAdapter(
         }
 
         holder.itemView.setOnClickListener {
-            onRecyclerItemClickedListener.onCustomerClicked(customer)
+            onRecyclerItemClickedListener.onItemClicked(customer)
             val lastSelectedPos = selectedPosition
             selectedPosition = currentPosition
             notifyItemChanged(selectedPosition)

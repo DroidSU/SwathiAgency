@@ -26,6 +26,10 @@ class DatabaseRepository(private val orderDao: OrderDao) {
         return orderDao.createOrderObject(orderObject)
     }
 
+    suspend fun updateOrder(orderId : String, orderedItemsList : List<ItemsModel>, orderTotal: Float) {
+        return orderDao.updateOrder(orderId, orderedItemsList, orderTotal)
+    }
+
     suspend fun getAllOrdersNotBackedUp(): List<OrdersTable> {
         return orderDao.getAllOrdersNotBackedUp()
     }
@@ -36,5 +40,13 @@ class DatabaseRepository(private val orderDao: OrderDao) {
 
     suspend fun setOrderIsBackedUp(orderId : String) {
         return orderDao.setIsBackedUp(orderId)
+    }
+
+    suspend fun deleteOrder(orderId: String){
+        return orderDao.deleteOrderObject(orderId)
+    }
+
+    suspend fun setOrderFileDetails(orderId : String, fileName : String, fileURI : String){
+        return orderDao.updateOrderFileDetails(orderId, fileName, fileURI)
     }
 }

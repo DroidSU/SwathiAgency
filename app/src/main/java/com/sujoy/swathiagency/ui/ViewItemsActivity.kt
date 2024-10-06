@@ -16,6 +16,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.sujoy.swathiagency.R
 import com.sujoy.swathiagency.adapters.CompanyViewPagerAdapter
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
+import com.sujoy.swathiagency.data.datamodels.ItemsModel
 import com.sujoy.swathiagency.databinding.ActivityViewItemsBinding
 
 class ViewItemsActivity : AppCompatActivity() {
@@ -25,34 +26,41 @@ class ViewItemsActivity : AppCompatActivity() {
     private lateinit var viewPagerAdapter: CompanyViewPagerAdapter
     private var isITCOrderCreated = false
     private var isAVTOrderCreated = false
+    private var orderList: MutableList<ItemsModel> = mutableListOf()
+    private var orderId = ""
+    private var fragmentIndex = 0
 
     @SuppressLint("NotifyDataSetChanged")
-    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val companyType = result.data?.getStringExtra("company")
+    private val resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val companyType = result.data?.getStringExtra("company")
 
-            if(companyType == "ITC"){
-                isITCOrderCreated = true
-            }
-
-            if(companyType == "AVT"){
-                isAVTOrderCreated = true
-            }
-
-            if(isITCOrderCreated && isAVTOrderCreated){
-                startActivity(Intent(this@ViewItemsActivity, CustomerSelectionActivity::class.java))
-                finish()
-            }
-            else{
-                if(isITCOrderCreated){
-                    binding.viewpagerCompany.setCurrentItem(1, true)
+                if (companyType == "ITC") {
+                    isITCOrderCreated = true
                 }
-                else{
-                    binding.viewpagerCompany.setCurrentItem(0, true)
+
+                if (companyType == "AVT") {
+                    isAVTOrderCreated = true
+                }
+
+                if (isITCOrderCreated && isAVTOrderCreated) {
+                    startActivity(
+                        Intent(
+                            this@ViewItemsActivity,
+                            CustomerSelectionActivity::class.java
+                        )
+                    )
+                    finish()
+                } else {
+                    if (isITCOrderCreated) {
+                        binding.viewpagerCompany.setCurrentItem(1, true)
+                    } else {
+                        binding.viewpagerCompany.setCurrentItem(0, true)
+                    }
                 }
             }
         }
-    }
 
     // Method to provide a way for fragments to access the result launcher
     fun getResultLauncher() = resultLauncher
@@ -80,7 +88,21 @@ class ViewItemsActivity : AppCompatActivity() {
 
         selectedCustomer = intent.getParcelableExtra("customer_model")
 
-        viewPagerAdapter = selectedCustomer?.let { CompanyViewPagerAdapter(this, it) }!!
+        if (intent.hasExtra("order_list")) {
+            orderList = intent.getParcelableArrayListExtra<ItemsModel>("order_list")!!
+            orderId = intent.getStringExtra("order_id")!!
+            fragmentIndex = intent.getIntExtra("index", 0)
+        }
+
+        viewPagerAdapter = selectedCustomer?.let {
+            CompanyViewPagerAdapter(
+                this,
+                it,
+                orderList.filter { itemsModel -> itemsModel.companyName == "ITC" }.toMutableList(),
+                orderList.filter { itemsModel -> itemsModel.companyName == "AVT" }.toMutableList(),
+                orderId
+            )
+        }!!
         binding.viewpagerCompany.adapter = viewPagerAdapter
 
 
@@ -127,5 +149,7 @@ class ViewItemsActivity : AppCompatActivity() {
             }
 
         })
+
+        binding.viewpagerCompany.setCurrentItem(fragmentIndex, true)
     }
 }

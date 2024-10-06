@@ -37,7 +37,7 @@ class CompanyViewModel(
     private val _orderedItemsList = MutableStateFlow<MutableList<ItemsModel>>(mutableListOf())
     val orderedItemsList: StateFlow<MutableList<ItemsModel>> = _orderedItemsList
 
-    fun fetchItemData(context: Context, fileUrl: String, companyType: String) {
+    fun fetchItemData(context: Context, companyType: String) {
         viewModelScope.launch(Dispatchers.IO) {
             if (UtilityMethods.isNetworkAvailable(context)) {
                 val data = repository.getItemsCSV(companyType)
@@ -56,6 +56,13 @@ class CompanyViewModel(
         }
     }
 
+    fun setOrders(orderList : MutableList<ItemsModel>){
+        viewModelScope.launch(Dispatchers.Main) {
+            _orderedItemsList.value = orderList
+            updateTotalBillValue()
+        }
+    }
+
     private fun getAllCategories() {
         val categoryList = _itemData.value.distinctBy { it.itemGroup }.map { it.itemGroup }
         _categories.value = categoryList.toMutableList()
@@ -63,8 +70,6 @@ class CompanyViewModel(
 
     fun getItemsInSelectedCategory(selectedCategory: String) {
         if (selectedCategory.isNotEmpty()) {
-            // Check if the category data is already cached
-
             _itemListOfSelectedCategories.value =
                 _itemData.value.filter { it.itemGroup == selectedCategory }
                     .sortedBy { it.taxablePcsRate.toFloat() }.toMutableList()

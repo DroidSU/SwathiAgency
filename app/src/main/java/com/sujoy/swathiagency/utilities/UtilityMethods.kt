@@ -178,7 +178,8 @@ class UtilityMethods {
         context: Context,
         data: List<ItemsModel>,
         customerModel: CustomerModel,
-        companyType: String
+        companyType: String,
+        createdDate : String
     ): File? {
         try {
             val date = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())
@@ -189,15 +190,15 @@ class UtilityMethods {
 
             val fileName: String = when (companyType) {
                 Constants.COMPANY_TYPE_ITC -> {
-                    "ITC_${salesmanName}_${getCurrentDateString("ddMMyyyy")}.csv"
+                    "ITC_${salesmanName}_$createdDate.csv"
                 }
 
                 Constants.COMPANY_TYPE_AVT -> {
-                    "AVT_${salesmanName}_${getCurrentDateString("ddMMyyyy")}.csv"
+                    "AVT_${salesmanName}_$createdDate.csv"
                 }
 
                 else -> {
-                    "OTHERS_${getCurrentDateString("ddMMyyyy")}.csv"
+                    "OTHERS_$createdDate.csv"
                 }
             }
 

@@ -2,6 +2,7 @@ package com.sujoy.swathiagency.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sujoy.swathiagency.data.datamodels.ItemsModel
 import com.sujoy.swathiagency.data.datamodels.OrdersTable
 import com.sujoy.swathiagency.utilities.DatabaseRepository
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +20,13 @@ class OrderedItemsViewModel(private val databaseRepository: DatabaseRepository) 
         viewModelScope.launch (Dispatchers.IO) {
             databaseRepository.createNewOrder(orderObject)
             _orderId.value = orderObject.orderId
+        }
+    }
+
+    fun updateOrderObject(orderId : String, orderedItemsList : List<ItemsModel>, orderTotal : Float) {
+        viewModelScope.launch (Dispatchers.IO) {
+            databaseRepository.updateOrder(orderId, orderedItemsList, orderTotal)
+            _orderId.value = orderId
         }
     }
 }

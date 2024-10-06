@@ -16,7 +16,7 @@ import com.sujoy.swathiagency.utilities.Constants
 
 @Database(
     entities = [OrderFileModel::class, CustomerModel::class, ItemsModel::class, OrdersTable::class],
-    version = 9,
+    version = 10,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -39,6 +39,7 @@ abstract class AppDatabase : RoomDatabase() {
                     .addMigrations(MIGRATION_2_3)
                     .addMigrations(MIGRATION_3_4)
                     .addMigrations(MIGRATION_4_5)
+                    .addMigrations(MIGRATION_5_6)
                     .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
@@ -79,6 +80,12 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_4_5 = object : Migration(4, 5) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE ${Constants.TABLE_ITEMS} ADD COLUMN ${Constants.COMPANY_NAME}")
+            }
+        }
+
+        private val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE ${Constants.TABLE_ORDERS} ADD COLUMN ${Constants.CUSTOMER_MODEL} AND REMOVE COLUMN ${Constants.CUSTOMER_NAME}")
             }
         }
     }

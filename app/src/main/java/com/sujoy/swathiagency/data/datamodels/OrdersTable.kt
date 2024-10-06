@@ -10,12 +10,12 @@ import kotlinx.parcelize.Parcelize
 data class OrdersTable(
     @PrimaryKey(autoGenerate = false)
     val orderId : String,
-    val customerName : String,
     val companyName : String,
     var orderTotal : Float = 0F,
     val createdDate : String,
     val orderedItemList : List<ItemsModel>,
-    val orderFileName : String,
+    val orderFileName : String = "",
     val isBackedUp : Boolean = false,
-    val fileURI : String
+    val fileURI : String = "",
+    val customerModel : CustomerModel
 ) : Parcelable

@@ -73,6 +73,21 @@ class ViewOrderViewModel(private val repository: DatabaseRepository) : ViewModel
         }
     }
 
+    fun removeOrderById(orderId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteOrder(orderId)
+            var total = 0F
+            for (item in _ordersList.value) {
+                total += item.orderTotal
+            }
+
+            withContext(Dispatchers.Main) {
+                _ordersList.value.removeIf { it.orderId == orderId }
+                _totalOrderValue.value = total
+            }
+        }
+    }
+
     fun backupOrders(context: Context, orderList: List<OrdersTable>) {
         viewModelScope.launch(Dispatchers.IO) {
             var backupURI: Uri? = null
@@ -100,17 +115,27 @@ class ViewOrderViewModel(private val repository: DatabaseRepository) : ViewModel
         }
     }
 
-    fun backupCustomerOrderTotal(context: Context, data: List<CustomerOrderModel>, totalValue : Long) {
+    fun backupCustomerOrderTotal(
+        context: Context,
+        data: List<CustomerOrderModel>,
+        totalValue: Long
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             var companyType = ""
-            companyType = if(viewType.value == 1){
+            companyType = if (viewType.value == 1) {
                 Constants.COMPANY_TYPE_ITC
-            } else{
+            } else {
                 Constants.COMPANY_TYPE_AVT
             }
 
-            val file = UtilityMethods().createCustomerOrdersBackupCSV(context, data, companyType, totalValue)
-            if(file != null && file.exists()){
+            val file = UtilityMethods().createCustomerOrdersBackupCSV(
+                context,
+                data,
+                companyType,
+                totalValue
+            )
+
+            if (file != null && file.exists()) {
                 UtilityMethods().backupCustomerOrderCSV(
                     context,
                     file,
@@ -127,6 +152,12 @@ class ViewOrderViewModel(private val repository: DatabaseRepository) : ViewModel
     private fun setOrderIsBackedUp(orderId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.setOrderIsBackedUp(orderId)
+        }
+    }
+
+    fun updateOrderFileURI(orderId: String, fileName : String, fileUri: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.setOrderFileDetails(orderId, fileName, fileUri)
         }
     }
 }

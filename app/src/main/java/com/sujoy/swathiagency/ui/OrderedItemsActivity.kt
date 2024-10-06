@@ -86,10 +86,15 @@ class OrderedItemsActivity : AppCompatActivity() {
             insets
         }
 
-        orderedItemsList = intent.getParcelableArrayListExtra("ordered_item_list")!!
         customerModel = intent.getParcelableExtra(CompanyFragment.CUSTOMER_MODEL_KEY)!!
         totalBillAmount = intent.getFloatExtra(CompanyFragment.TOTAL_BILL, 0F)
         companyType = intent.getStringExtra(CompanyFragment.COMPANY_TYPE_KEY)!!
+        if (intent.hasExtra("ordered_item_list")) {
+            orderedItemsList = intent.getParcelableArrayListExtra("ordered_item_list")!!
+        }
+        if (intent.hasExtra("order_id")) {
+            orderId = intent.getStringExtra("order_id")!!
+        }
 
         orderedItemsRecyclerAdapter = OrderedItemsRecyclerAdapter(orderedItemsList)
         binding.rvOrderedItems.layoutManager = LinearLayoutManager(this)
@@ -108,19 +113,13 @@ class OrderedItemsActivity : AppCompatActivity() {
         }
 
         binding.btnCancelOrder.setOnClickListener {
-//            startActivity(
-//                Intent(this, ViewItemsActivity::class.java).putExtra(
-//                    "customer_model",
-//                    customerModel
-//                )
-//            )
             finish()
         }
 
         lifecycleScope.launch {
             viewModel.orderId.collect { value ->
                 withContext(Dispatchers.Main) {
-                    if(value.isNotEmpty()){
+                    if (value.isNotEmpty()) {
                         Toast.makeText(
                             this@OrderedItemsActivity,
                             "Order Created Successfully!",
@@ -129,7 +128,10 @@ class OrderedItemsActivity : AppCompatActivity() {
                         lottieOverlayFragment.dismiss()
                         UtilityMethods.setBillNumber(
                             this@OrderedItemsActivity,
-                            billNumber = UtilityMethods.getBillNumber(this@OrderedItemsActivity, companyType) + 1,
+                            billNumber = UtilityMethods.getBillNumber(
+                                this@OrderedItemsActivity,
+                                companyType
+                            ) + 1,
                             UtilityMethods.getBillId(this@OrderedItemsActivity, companyType),
                             companyType
                         )
@@ -178,31 +180,30 @@ class OrderedItemsActivity : AppCompatActivity() {
     private fun onPermissionGranted() {
         lottieOverlayFragment.show(supportFragmentManager, "lottie_overlay")
 
-        timestamp = UtilityMethods.getCurrentDateString("ddMMyyyy_HHmmss")
-        val csvFile = UtilityMethods().createOrUpdateCsvFile(
-            this,
-            orderedItemsList,
-            customerModel,
-            companyType,
-        )
-
-        if (csvFile!!.exists()) {
-            saveOrderInDB(csvFile.nameWithoutExtension, UtilityMethods().getFileUri(this, csvFile).toString())
+        if (orderId.isEmpty()) {
+            createOrderInDB()
+        } else {
+            updateOrder()
         }
     }
 
-    private fun saveOrderInDB(filename : String, fileURI : String) {
-        orderId = "ORD_${timestamp}"
+    private fun updateOrder() {
+        viewModel.updateOrderObject(orderId, orderedItemsList, totalBillAmount)
+    }
+
+    private fun createOrderInDB() {
+        orderId = "ORD_${UtilityMethods.getCurrentDateString("ddMMyyyy_HHmmss")}"
+
         val orderObject = OrdersTable(
             orderId = orderId,
-            customerName = customerModel.customerName,
             orderTotal = totalBillAmount,
             createdDate = UtilityMethods.getCurrentDateString("dd-MM-yyyy"),
             companyName = companyType,
-            orderFileName = filename,
+            orderFileName = "",
             orderedItemList = orderedItemsList.toList(),
             isBackedUp = false,
-            fileURI = fileURI
+            fileURI = "",
+            customerModel = customerModel
         )
         viewModel.createOrderObjectInDB(orderObject)
     }
@@ -212,7 +213,7 @@ class OrderedItemsActivity : AppCompatActivity() {
         // After explaining, request the permission again
         AlertDialog.Builder(this)
             .setTitle("Permission Needed")
-            .setMessage("This app needs the permission to do something.")
+            .setMessage("External storage permission is needed to store your order in csv.")
             .setPositiveButton("OK") { _, _ ->
                 requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             }

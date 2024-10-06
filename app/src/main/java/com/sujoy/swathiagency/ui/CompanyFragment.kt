@@ -41,12 +41,16 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
         const val CUSTOMER_MODEL_KEY = "CUSTOMER_MODEL"
         const val COMPANY_TYPE_KEY = "COMPANY_TYPE"
         const val TOTAL_BILL = "TOTAL_BILL"
+        const val ORDER_LIST = "order_list"
+        const val ORDER_ID = "order_id"
 
-        fun newInstance(companyType: String, customerModel: CustomerModel): CompanyFragment {
+        fun newInstance(companyType: String, customerModel: CustomerModel, itemModelList: ArrayList<ItemsModel>, orderId : String): CompanyFragment {
             val fragment = CompanyFragment()
             val args = Bundle()
             args.putString(COMPANY_TYPE_KEY, companyType)
             args.putParcelable(CUSTOMER_MODEL_KEY, customerModel)
+            args.putParcelableArrayList(ORDER_LIST, itemModelList)
+            args.putString(ORDER_ID, orderId)
             fragment.arguments = args
             return fragment
         }
@@ -76,15 +80,14 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
     private var salesmanName: String = ""
     private var billId: String = ""
     private var totalBillValue = 0F
+    private var orderedList : MutableList<ItemsModel> = mutableListOf()
+    private var orderID : String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentItcBinding.inflate(inflater, container, false)
-
-
-
         return binding.root
     }
 
@@ -144,12 +147,12 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
                 val intent = Intent(requireActivity(), OrderedItemsActivity::class.java)
                 intent.putParcelableArrayListExtra(
                     "ordered_item_list",
-                    ArrayList(arraylist)
+                    ArrayList(arraylist),
                 )
+                intent.putExtra(ORDER_ID, orderID)
                 intent.putExtra(CUSTOMER_MODEL_KEY, selectedCustomer)
                 intent.putExtra(COMPANY_TYPE_KEY, companyType)
                 intent.putExtra(TOTAL_BILL, viewModel.totalBill.value)
-//                startActivity(intent)
                 resultLauncher.launch(intent)
             }
         }
@@ -191,6 +194,13 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
             viewModel.itemData.collect { data ->
                 if (data.isNotEmpty()) {
                     itemList = data
+
+                    if(arguments?.containsKey(ORDER_LIST) == true){
+                        orderedList = requireArguments().getParcelableArrayList(ORDER_LIST)!!
+                        orderID = requireArguments().getString(ORDER_ID)!!
+                        viewModel.setOrders(orderedList)
+                        itemsRecyclerAdapter.setOrderedItems(orderedList)
+                    }
                 }
             }
         }
@@ -229,15 +239,6 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
                     totalBillValue = BigDecimal(value.toString()).setScale(2, RoundingMode.HALF_UP)
                         .toFloat()
                     binding.tvTotalAmount.text = totalBillValue.toString()
-
-//                    if (totalBillValue > 0F) {
-//                        binding.llBillAmount.visibility = View.VISIBLE
-//                        binding.llConfirmCancelOrder.visibility = View.VISIBLE
-//                    } else {
-//                        binding.llBillAmount.visibility = View.GONE
-//                        binding.llConfirmCancelOrder.visibility = View.GONE
-//                    }
-
                     binding.llBillAmount.visibility = View.VISIBLE
                     binding.llConfirmCancelOrder.visibility = View.VISIBLE
                 }
@@ -273,13 +274,11 @@ class CompanyFragment : Fragment(), OnItemEvent, OnSubmitButtonTapped {
         if (companyType == Constants.COMPANY_TYPE_ITC) {
             viewModel.fetchItemData(
                 requireContext(),
-                "https://drive.google.com/uc?export=download&id=${Constants.ITC_ITEM_FILE_DRIVE_ID}",
                 companyType
             )
         } else {
             viewModel.fetchItemData(
                 requireContext(),
-                "https://drive.google.com/uc?export=download&id=${Constants.AVT_ITEM_FILE_DRIVE_ID}",
                 companyType
             )
         }

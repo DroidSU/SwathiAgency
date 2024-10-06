@@ -21,7 +21,7 @@ import com.sujoy.swathiagency.data.datamodels.CustomerModel
 import com.sujoy.swathiagency.data.datamodels.OrderFileModel
 import com.sujoy.swathiagency.database.AppDatabase
 import com.sujoy.swathiagency.databinding.ActivityCustomerSelectionBinding
-import com.sujoy.swathiagency.interfaces.OnRecyclerItemClickedListener
+import com.sujoy.swathiagency.interfaces.OnCustomerRecyclerItemClick
 import com.sujoy.swathiagency.network.NetworkRepository
 import com.sujoy.swathiagency.utilities.Constants
 import com.sujoy.swathiagency.utilities.DatabaseRepository
@@ -30,7 +30,7 @@ import com.sujoy.swathiagency.viewmodels.CsvViewModelFactory
 import com.sujoy.swathiagency.viewmodels.CustomerSelectionViewModel
 import kotlinx.coroutines.launch
 
-class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedListener {
+class CustomerSelectionActivity : AppCompatActivity(), OnCustomerRecyclerItemClick {
 
     private lateinit var binding: ActivityCustomerSelectionBinding
 
@@ -176,7 +176,7 @@ class CustomerSelectionActivity : AppCompatActivity(), OnRecyclerItemClickedList
     }
 
 
-    override fun onCustomerClicked(customer: CustomerModel) {
+    override fun onItemClicked(customer: CustomerModel) {
         UtilityMethods.hideKeyBoard(binding.root, this)
         selectedCustomer = customer
         binding.btnNextScreen.visibility = View.VISIBLE
