@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
 import com.sujoy.swathiagency.data.datamodels.ItemsModel
-import com.sujoy.swathiagency.ui.CompanyFragment
+import com.sujoy.swathiagency.ui.order.CompanyFragment
 import com.sujoy.swathiagency.utilities.Constants
 
 class CompanyViewPagerAdapter(

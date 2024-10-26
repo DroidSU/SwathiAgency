@@ -21,6 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SwathiAgency"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.collections.CashCollectionView"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -35,7 +38,7 @@
         <activity
             android:name=".ui.ViewOrdersActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.MainActivity"
             android:exported="true">
@@ -49,16 +52,16 @@
             android:name=".ui.SalesmanSelectionActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.OrderedItemsActivity"
+            android:name=".ui.order.OrderedItemsActivity"
             android:exported="false" />
         <activity
             android:name=".ui.CustomerSelectionActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.ViewItemsActivity"
+            android:name=".ui.order.ViewItemsActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

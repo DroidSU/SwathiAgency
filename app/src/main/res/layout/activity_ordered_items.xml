@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-    tools:context=".ui.OrderedItemsActivity">
+    tools:context=".ui.order.OrderedItemsActivity">
 
     <LinearLayout
         android:id="@+id/ll_heading"

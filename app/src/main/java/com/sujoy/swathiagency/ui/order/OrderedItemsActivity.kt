@@ -1,4 +1,4 @@
-package com.sujoy.swathiagency.ui
+package com.sujoy.swathiagency.ui.order
 
 import android.Manifest
 import android.app.Activity
@@ -24,12 +24,13 @@ import com.sujoy.swathiagency.data.datamodels.ItemsModel
 import com.sujoy.swathiagency.data.datamodels.OrdersTable
 import com.sujoy.swathiagency.database.AppDatabase
 import com.sujoy.swathiagency.databinding.ActivityOrderedItemsBinding
+import com.sujoy.swathiagency.ui.LottieOverlayFragment
 import com.sujoy.swathiagency.utilities.Constants
 import com.sujoy.swathiagency.utilities.DatabaseRepository
 import com.sujoy.swathiagency.utilities.UtilityMethods
 import com.sujoy.swathiagency.utilities.UtilityMethods.Companion.showAlertDialog
-import com.sujoy.swathiagency.viewmodels.OrderedItemsVMFactory
-import com.sujoy.swathiagency.viewmodels.OrderedItemsViewModel
+import com.sujoy.swathiagency.viewmodels.order.OrderedItemsVMFactory
+import com.sujoy.swathiagency.viewmodels.order.OrderedItemsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

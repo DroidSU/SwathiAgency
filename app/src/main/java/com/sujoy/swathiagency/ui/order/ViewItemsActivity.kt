@@ -1,4 +1,4 @@
-package com.sujoy.swathiagency.ui
+package com.sujoy.swathiagency.ui.order
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -18,6 +18,7 @@ import com.sujoy.swathiagency.adapters.CompanyViewPagerAdapter
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
 import com.sujoy.swathiagency.data.datamodels.ItemsModel
 import com.sujoy.swathiagency.databinding.ActivityViewItemsBinding
+import com.sujoy.swathiagency.ui.CustomerSelectionActivity
 
 class ViewItemsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityViewItemsBinding

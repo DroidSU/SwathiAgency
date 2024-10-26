@@ -13,73 +13,74 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/light_blue_600"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:title="Swathi Agency"
-        app:titleTextColor="@android:color/white"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:popupTheme="@style/CustomMenu"/>
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/CustomMenu"
+        app:title="Swathi Agency"
+        app:titleTextColor="@android:color/white" />
 
     <TextView
         android:id="@+id/tv_choose_customer_heading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Choose customer"
-        android:textSize="16sp"
-        android:textColor="@color/black"
         android:gravity="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        android:padding="8dp"
+        android:text="Choose customer"
+        android:textColor="@color/black"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:padding="8dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <AutoCompleteTextView
         android:id="@+id/search_customers_route_dropdown"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:inputType="text"
-        android:imeOptions="actionDone"
-        android:padding="12dp"
-        android:textSize="16sp"
-        android:textColor="@color/black"
-        android:hint="@string/search_by_route"
-
-        app:layout_constraintTop_toBottomOf="@id/tv_choose_customer_heading"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
         android:layout_marginTop="5dp"
-        android:background="@drawable/rounded_corner_black_border"/>
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/rounded_corner_black_border"
+        android:hint="@string/search_by_route"
+        android:imeOptions="actionDone"
+
+        android:inputType="text"
+        android:padding="12dp"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_choose_customer_heading" />
 
     <LinearLayout
         android:id="@+id/ll_loading_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/search_customers_route_dropdown"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_customers_route_dropdown"
         tools:visibility="gone">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:text="Fetching customer list ..."
             android:textColor="@android:color/darker_gray"
-            android:textSize="16sp"
-            android:gravity="center"/>
+            android:textSize="16sp" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:layout_width="200dp"
             android:layout_height="120dp"
-            app:lottie_rawRes="@raw/loading_anim"
-            app:lottie_loop="true"
-            app:lottie_autoPlay="true"
+            android:background="@android:color/transparent"
             android:scaleType="fitCenter"
-            android:background="@android:color/transparent"/>
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading_anim" />
 
     </LinearLayout>
 
@@ -87,48 +88,96 @@
         android:id="@+id/searchView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/search_customers_route_dropdown"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"
-        app:iconifiedByDefault="false"
-        app:queryHint="@string/search_by_name"
+        android:layout_marginEnd="10dp"
         android:visibility="gone"
-        tools:visibility="visible"/>
+        app:iconifiedByDefault="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_customers_route_dropdown"
+        app:queryHint="@string/search_by_name"
+        tools:visibility="visible" />
 
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_customers"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchView"
         tools:layout="@layout/layout_customer_recycler_item"
-        android:layout_marginTop="10dp"
-        android:visibility="gone"
-        tools:visibility="visible"/>
+        tools:visibility="visible" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_next_screen"
         android:layout_width="wrap_content"
         android:layout_height="60dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="10dp"
         android:backgroundTint="@color/light_blue_600"
+        android:gravity="center"
         android:text="Next"
         android:textSize="16sp"
         app:icon="@drawable/ic_next"
         app:iconGravity="textEnd"
-        app:iconSize="24dp"
         app:iconPadding="8dp"
-        android:gravity="center"
+        app:iconSize="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="gone"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/ll_open_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
         android:visibility="gone"
-        tools:visibility="visible"/>
+        tools:visibility="visible">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_open_pending_order"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/light_blue_600"
+            android:gravity="center"
+            android:text="Pending Order"
+            android:textSize="14sp"
+            android:layout_weight="1"
+            android:layout_margin="4dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_open_cash_collection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/light_blue_600"
+            android:gravity="center"
+            android:text="Cash Collection"
+            android:textSize="14sp"
+            android:layout_weight="1"
+            android:layout_margin="4dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_open_orders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/light_blue_600"
+            android:gravity="center"
+            android:text="Order"
+            android:textSize="14sp"
+            android:layout_weight="1"
+            android:layout_margin="4dp"/>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

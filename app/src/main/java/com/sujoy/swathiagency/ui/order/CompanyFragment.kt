@@ -1,4 +1,4 @@
-package com.sujoy.swathiagency.ui
+package com.sujoy.swathiagency.ui.order
 
 import android.R
 import android.annotation.SuppressLint
@@ -23,12 +23,15 @@ import com.sujoy.swathiagency.databinding.FragmentItcBinding
 import com.sujoy.swathiagency.interfaces.OnItemEvent
 import com.sujoy.swathiagency.interfaces.OnSubmitButtonTapped
 import com.sujoy.swathiagency.network.NetworkRepository
+import com.sujoy.swathiagency.ui.BillNumberDialog
+import com.sujoy.swathiagency.ui.CustomerSelectionActivity
+import com.sujoy.swathiagency.ui.LottieOverlayFragment
 import com.sujoy.swathiagency.utilities.Constants
 import com.sujoy.swathiagency.utilities.DatabaseRepository
 import com.sujoy.swathiagency.utilities.UtilityMethods
 import com.sujoy.swathiagency.utilities.UtilityMethods.Companion.showAlertDialog
-import com.sujoy.swathiagency.viewmodels.CompanyVMFactory
-import com.sujoy.swathiagency.viewmodels.CompanyViewModel
+import com.sujoy.swathiagency.viewmodels.order.CompanyVMFactory
+import com.sujoy.swathiagency.viewmodels.order.CompanyViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

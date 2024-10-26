@@ -1,5 +1,6 @@
 package com.sujoy.swathiagency.interfaces
 
+import com.sujoy.swathiagency.data.datamodels.CollectionsCustomerModel
 import com.sujoy.swathiagency.data.datamodels.CustomerModel
 import com.sujoy.swathiagency.data.datamodels.ItemsModel
 
@@ -9,5 +10,9 @@ interface OnCustomerRecyclerItemClick {
 
 interface OnViewOrderRecyclerItemClick{
     fun onItemClicked(orderId : String, customerModel : CustomerModel, itemsModel: MutableList<ItemsModel>)
+}
+
+interface OnCashCollectionRecyclerItemClick{
+    fun onItemClicked(cashCollectionsCustomerModel: CollectionsCustomerModel)
 }
 

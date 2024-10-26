@@ -1,4 +1,4 @@
-package com.sujoy.swathiagency.viewmodels
+package com.sujoy.swathiagency.viewmodels.order
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

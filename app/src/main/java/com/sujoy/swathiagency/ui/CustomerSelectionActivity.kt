@@ -23,10 +23,12 @@ import com.sujoy.swathiagency.database.AppDatabase
 import com.sujoy.swathiagency.databinding.ActivityCustomerSelectionBinding
 import com.sujoy.swathiagency.interfaces.OnCustomerRecyclerItemClick
 import com.sujoy.swathiagency.network.NetworkRepository
+import com.sujoy.swathiagency.ui.collections.CashCollectionView
+import com.sujoy.swathiagency.ui.order.ViewItemsActivity
 import com.sujoy.swathiagency.utilities.Constants
 import com.sujoy.swathiagency.utilities.DatabaseRepository
 import com.sujoy.swathiagency.utilities.UtilityMethods
-import com.sujoy.swathiagency.viewmodels.CsvViewModelFactory
+import com.sujoy.swathiagency.viewmodels.CustomerSelectionVMFactory
 import com.sujoy.swathiagency.viewmodels.CustomerSelectionViewModel
 import kotlinx.coroutines.launch
 
@@ -48,7 +50,7 @@ class CustomerSelectionActivity : AppCompatActivity(), OnCustomerRecyclerItemCli
 
 
     private val viewModel: CustomerSelectionViewModel by viewModels {
-        CsvViewModelFactory(
+        CustomerSelectionVMFactory(
             NetworkRepository(this),
             DatabaseRepository(AppDatabase.getDatabase(this).orderDao())
         )
@@ -164,6 +166,26 @@ class CustomerSelectionActivity : AppCompatActivity(), OnCustomerRecyclerItemCli
             )
             finish()
         }
+
+        binding.btnOpenOrders!!.setOnClickListener {
+            startActivity(
+                Intent(this, ViewItemsActivity::class.java).putExtra(
+                    "customer_model",
+                    selectedCustomer
+                )
+            )
+            finish()
+        }
+
+        binding.btnOpenCashCollection!!.setOnClickListener {
+            startActivity(
+                Intent(this, CashCollectionView::class.java).putExtra(
+                    "customer_model",
+                    selectedCustomer
+                )
+            )
+            finish()
+        }
     }
 
     override fun onStart() {
@@ -179,7 +201,9 @@ class CustomerSelectionActivity : AppCompatActivity(), OnCustomerRecyclerItemCli
     override fun onItemClicked(customer: CustomerModel) {
         UtilityMethods.hideKeyBoard(binding.root, this)
         selectedCustomer = customer
-        binding.btnNextScreen.visibility = View.VISIBLE
+
+        binding.llOpenType!!.visibility = View.VISIBLE
+//        binding.btnNextScreen.visibility = View.VISIBLE
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
